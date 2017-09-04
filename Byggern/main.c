@@ -11,16 +11,27 @@
 #include <stdio.h>
 
 #include "drivers/usart.h"
+#include "drivers/xmem.h"
+
+
+
+#include <stdlib.h>
+
+
+
 
 int main(void)
 {
 	usart_init(9600);
 
+	xmem_init();
+
 	sei();
+	
+	xmem_test();
 
     while (1) 
     {
-		_delay_ms(500);
     }
 }
 
