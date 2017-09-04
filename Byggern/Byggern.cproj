@@ -135,6 +135,12 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="drivers\xadc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="drivers\xadc.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="drivers\xmem.c">
       <SubType>compile</SubType>
     </Compile>
