@@ -10,15 +10,18 @@
 #define JOYSTICK_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef enum {
-	DIR_CENTER,
-	DIR_RIGHT,
-	DIR_UP,
-	DIR_LEFT,
-	DIR_DOWN 
+	JoystickDir_CENTER,
+	JoystickDir_RIGHT,
+	JoystickDir_UP,
+	JoystickDir_LEFT,
+	JoystickDir_DOWN 
 } JoystickDir_t;
 
+
+void joystick_init();
 void joystick_calibrate_center();
 int8_t joystick_get_x();
 int8_t joystick_get_y();
