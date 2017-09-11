@@ -141,6 +141,12 @@
     <Compile Include="drivers\joystick.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="drivers\oled.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="drivers\oled.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="drivers\touch.c">
       <SubType>compile</SubType>
     </Compile>
