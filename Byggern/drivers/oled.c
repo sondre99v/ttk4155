@@ -11,17 +11,19 @@
 
 #include <stdint.h>
 
+#include "joystick.h"
+
 volatile uint8_t* OLED_CMD_ADDR = (uint8_t*)0x1000;
 volatile uint8_t* OLED_DAT_ADDR = (uint8_t*)0x1200;
 
 void _write_cmd_byte(uint8_t value) {
 	*OLED_CMD_ADDR = value;
-	_delay_ms(10);
+	_delay_us(1);
 }
 
 void _write_dat_byte(uint8_t value) {
 	*OLED_DAT_ADDR = value;
-	_delay_ms(10);
+	_delay_us(1);
 }
 
 void oled_init() {
@@ -53,8 +55,27 @@ void oled_init() {
 	
 	_delay_ms(10);
 	
+
 	while(1) {
-		_write_dat_byte(0x55);
-		_write_dat_byte(0xAA);
+		
+		_write_cmd_byte(0x10);
+		_write_cmd_byte(0x00);
+
+		int a = -joystick_get_x();
+		printf("%d\r\n", a);
+
+		for(int line = 0; line < 8; line++) {
+			_write_cmd_byte(0xB0 | line);
+
+
+			for(int x = 0; x < a; x++) {
+				_write_dat_byte(0xFF);
+			}
+			for(int x = a; x < 128; x++) {
+				_write_dat_byte(0x00);
+			}
+		}
+
+		_delay_ms(30);
 	}
 }
