@@ -6,15 +6,16 @@
  */ 
 
 #include "xadc.h"
-#include <stdint.h>
 
-typedef enum {
-	XAdcCh_CH1,
-	XAdcCh_CH2,
-	XAdcCh_CH3,
-	XAdcCh_CH4,
-} XAdcCh_t;
+#include <util/delay.h>
 
-void xadc_init();
+#define ADC_ADDR ((uint8_t*) 0x1400)
+#define ADC_CONVERSION_TIME_uS 50
 
-uint8_t xadc_read();
+uint8_t xadc_read(XAdcCh_t channel) {
+	*ADC_ADDR = channel;
+	
+	_delay_us(ADC_CONVERSION_TIME_uS);
+
+	return *ADC_ADDR;
+}
