@@ -28,7 +28,10 @@ int main(void)
 
 	xmem_init();
 	oled_init();
-	
+	oled_position(0,0);
+	oled_print(8);
+	oled_print(5);
+	oled_print(9);
 	//joystick_init();
 
 	//sei();

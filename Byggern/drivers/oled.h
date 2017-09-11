@@ -5,15 +5,19 @@
  *  Author: Sondre
  */ 
 
+#include <stdint.h>
+#include <stdio.h>
+#include <stdbool.h>
 
 #ifndef OLED_H_
 #define OLED_H_
 
-void oled_init();
+void oled_init(void);
+void oled_clear(void);
+bool oled_position(uint8_t row, uint8_t column);
+void oled_clear_row(uint8_t row);
+void oled_print(char a);
 
-/*void oled_reset();
-void oled_home();
-void oled_goto_line(uint8_t line);
-void oled_goto_column(uint8_t column);void oled_clear_line(uint8_t line);void oled_pos(uint8_t row, uint8_t column);void oled_print(char* str);*/
+/*void oled_print(char* str);*/
 
 #endif /* OLED_H_ */
