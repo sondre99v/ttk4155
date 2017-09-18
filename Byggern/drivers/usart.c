@@ -32,6 +32,4 @@ void usart_init(uint32_t baud_rate)
 
 	// Enable receive interrupt
 	UCSR0B |= (1 << RXCIE0);
-
-	fdevopen(_usart_tx_char, NULL);
 }

@@ -9,11 +9,12 @@
 
 #include "xadc.h"
 
+#include <avr/io.h>
 #include <math.h>
 
-#define BUTTON_DDR
-#define BUTTON_PORT
-#define BUTTON_PIN
+#define BUTTON_PORT PORTE
+#define BUTTON_PINR PINE
+#define BUTTON_PIN 0
 
 #define ADC_CH_X XAdcCh_CH1
 #define ADC_CH_Y XAdcCh_CH2
@@ -27,7 +28,7 @@ static int8_t calibration_offset_y = 0;
 
 
 void joystick_init() {
-	
+	PORTE |= (1 << BUTTON_PIN);
 }
 
 void joystick_calibrate_center() {
@@ -38,14 +39,14 @@ void joystick_calibrate_center() {
 }
 
 int8_t joystick_get_x() {
-	int adc_val = ((int)xadc_read(ADC_CH_X) - 128);
+	int16_t adc_val = ((int)xadc_read(ADC_CH_X) - 128);
 	adc_val -= calibration_offset_x;
 
 	return clamp(adc_val, -127, 128);
 }
 
 int8_t joystick_get_y() {
-	int adc_val = ((int)xadc_read(ADC_CH_Y) - 128);
+	int16_t adc_val = ((int)xadc_read(ADC_CH_Y) - 128);
 	adc_val -= calibration_offset_y;
 
 	return clamp(adc_val, -127, 128);
@@ -53,8 +54,7 @@ int8_t joystick_get_y() {
 }
 
 bool joystick_get_button() {
-	// TODO: Implement
-	return false;
+	return (BUTTON_PINR & (1 << BUTTON_PIN)) == 0;
 }
 
 JoystickDir_t joystick_get_direction() {
@@ -62,9 +62,9 @@ JoystickDir_t joystick_get_direction() {
 	int8_t y = joystick_get_y();
 
 	if (x > DIRECTION_THRESHOLD && abs(x) > abs(y)) return JoystickDir_RIGHT;
-	if (y < -DIRECTION_THRESHOLD && abs(x) < abs(y)) return JoystickDir_UP;
+	if (y > DIRECTION_THRESHOLD && abs(x) < abs(y)) return JoystickDir_UP;
 	if (x < -DIRECTION_THRESHOLD && abs(x) > abs(y)) return JoystickDir_LEFT;
-	if (y > DIRECTION_THRESHOLD && abs(x) < abs(y)) return JoystickDir_DOWN;
+	if (y < -DIRECTION_THRESHOLD && abs(x) < abs(y)) return JoystickDir_DOWN;
 
 	return JoystickDir_CENTER;
 }

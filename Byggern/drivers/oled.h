@@ -12,12 +12,19 @@
 #ifndef OLED_H_
 #define OLED_H_
 
-void oled_init(void);
-void oled_clear(void);
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define TEXT_WIDTH 8
+#define TEXT_HEIGHT 8
+#define SCREEN_COLUMNS (SCREEN_WIDTH / TEXT_WIDTH)
+#define SCREEN_ROWS (SCREEN_HEIGHT / TEXT_HEIGHT)
+
+void oled_init();
+void oled_clear();
+void oled_home();
 bool oled_position(uint8_t row, uint8_t column);
 void oled_clear_row(uint8_t row);
-void oled_print(char a);
 
-/*void oled_print(char* str);*/
+void oled_write_char(char c);
 
 #endif /* OLED_H_ */

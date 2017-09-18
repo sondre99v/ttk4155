@@ -7,11 +7,18 @@
 
 #include "oled.h"
 
+#include "font.h"
+
 #include <util/delay.h>
+#include <avr/pgmspace.h>
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "joystick.h"
+
+static uint8_t cursor_row = 0;
+static uint8_t cursor_column = 0;
 
 volatile uint8_t* OLED_CMD_ADDR = (uint8_t*)0x1000;
 volatile uint8_t* OLED_DAT_ADDR = (uint8_t*)0x1200;
@@ -47,18 +54,12 @@ void oled_init() {
 	_write_cmd_byte(0xAD); // Master configuration
 	_write_cmd_byte(0x00);
 	_write_cmd_byte(0xA4); // Out follows RAM content
-
-	_write_cmd_byte(0xA6); // Set normal display
-	//_write_cmd_byte(0xA7); // Set inverted display
-	
+	_write_cmd_byte(0xA6); // Set non-inverted display
 	_write_cmd_byte(0xAF); // Display on
-	
-	_delay_ms(10);
-	
 	oled_clear();
 }
 
-void oled_clear(void){
+void oled_clear() {
 	_write_cmd_byte(0x10);
 	_write_cmd_byte(0x00);
 
@@ -69,205 +70,75 @@ void oled_clear(void){
 			_write_dat_byte(0x00);
 		}
 	}
+
+	oled_home();
 }
 
-void oled_home(void){
+void oled_home() {
 	_write_cmd_byte(0xB0);
+
+	cursor_column = 0;
+	cursor_row = 0;
 }
 
-bool oled_position(uint8_t row, uint8_t column){
+bool oled_position(uint8_t row, uint8_t column) {
 	if (row > 7 || row < 0 || column > 127 || column < 0) return false;
+	
 	_write_cmd_byte(0xB0 | row);
+	
 	uint8_t low_column = column % 16;
 	uint8_t high_column = ((column- low_column) / 16);
+	
 	_write_cmd_byte(0x10 | high_column);
 	_write_cmd_byte(low_column);
-	//_write_dat_byte(0xFF);
-	return true;
-	}
 
-void oled_clear_row(uint8_t row){
-	oled_position(row,0);
-	for (uint8_t i = 0; i < 180; i++){
+	cursor_column = column;
+	cursor_row = row;
+	
+	return true;
+}
+
+void oled_clear_row(uint8_t row) {
+	oled_position(row, 0);
+	for (uint8_t i = 0; i < 180; i++) {
 		_write_dat_byte(0x00);
 	}
 }
 
-void oled_print(char a){
-	
-	_write_dat_byte(0x00);
-	switch (a){
-		case 1:
-			_write_dat_byte(0b11000000);
-			_write_dat_byte(0b00110000);
-			_write_dat_byte(0b00011100);
-			_write_dat_byte(0b00010011);
-			_write_dat_byte(0b00011100);
-			_write_dat_byte(0b00110000);
-			_write_dat_byte(0b11000000);
-		break;
-		case 2:
-			_write_dat_byte(0b11111111);
-			_write_dat_byte(0b10010001);
-			_write_dat_byte(0b10011001);
-			_write_dat_byte(0b01100110);
-		break;
-		case 3:
-			_write_dat_byte(0b00111100);
-			_write_dat_byte(0b01000010);
-			_write_dat_byte(0b10000001);
-			_write_dat_byte(0b01000010);
-			break;
-		case 4:
-			_write_dat_byte(0b11111111);
-			_write_dat_byte(0b10000001);
-			_write_dat_byte(0b10000001);
-			_write_dat_byte(0b01000010);
-			_write_dat_byte(0b00111100);
-		break;
-		case 5:
-			_write_dat_byte(0b11111111);
-			_write_dat_byte(0b10001001);
-			_write_dat_byte(0b10001001);
-			_write_dat_byte(0b10001001);
-		break;
-		case 6:
-			_write_dat_byte(0b11111111);
-			_write_dat_byte(0b00010001);
-			_write_dat_byte(0b00010001);
-			_write_dat_byte(0b00010001);
-		break;
-		case 7:
-			_write_dat_byte(0b01111110);
-			_write_dat_byte(0b10000001);
-			_write_dat_byte(0b10000001);
-			_write_dat_byte(0b10010001);
-			_write_dat_byte(0b01110001);
-		break;
-		case 8:
-			_write_dat_byte(0b11111111);
-			_write_dat_byte(0b00010000);
-			_write_dat_byte(0b00010000);
-			_write_dat_byte(0b11111111);
-		break;
-		case 9:
-			_write_dat_byte(0x81);
-			_write_dat_byte(0xFF);
-			_write_dat_byte(0x81);
-		break;
-		case 10:
-			_write_dat_byte(0b01000001);
-			_write_dat_byte(0b10000001);
-			_write_dat_byte(0b01111111);		
-		break;
-		case 11:
-			_write_dat_byte(0b11111111);
-			_write_dat_byte(0b00011000);
-			_write_dat_byte(0b01100110);
-			_write_dat_byte(0b10000001);
-		break;
-		case 12:
-			_write_dat_byte(0b11111111);
-			_write_dat_byte(0b10000000);
-			_write_dat_byte(0b10000000);
-			_write_dat_byte(0b10000000);
-		break;
-		case 13:
-			_write_dat_byte(0b11111111);
-			_write_dat_byte(0b00001100);
-			_write_dat_byte(0b00110000);
-			_write_dat_byte(0b00001100);
-			_write_dat_byte(0b11111111);
-		break;
-		case 14:
-			_write_dat_byte(0b11111111);
-			_write_dat_byte(0b00000110);
-			_write_dat_byte(0b00011000);
-			_write_dat_byte(0b01100000);
-			_write_dat_byte(0b11111111);
-		break;
-		case 15:
-			_write_dat_byte(0b00111100);
-			_write_dat_byte(0b01000010);
-			_write_dat_byte(0b10000001);
-			_write_dat_byte(0b01000010);
-			_write_dat_byte(0b00111100);
-		break;
-		case 16:
-			_write_dat_byte(0b11111111);
-			_write_dat_byte(0b00010001);
-			_write_dat_byte(0b00010001);
-			_write_dat_byte(0b00001110);
-		break;
-		case 17:
-			_write_dat_byte(0b11111111);
-			_write_dat_byte(0b00110001);
-			_write_dat_byte(0b01010001);
-			_write_dat_byte(0b10001110);
-		break;
-		case 18:
-			_write_dat_byte(0b10000100);
-			_write_dat_byte(0b10001010);
-			_write_dat_byte(0b01010001);
-			_write_dat_byte(0b00100001);
-		break;
-		case 19:
-			_write_dat_byte(0b00000001);
-			_write_dat_byte(0b00000001);
-			_write_dat_byte(0b11111111);
-			_write_dat_byte(0b00000001);
-			_write_dat_byte(0b00000001);
-		break;
-		case 20:
-			_write_dat_byte(0b01111111);
-			_write_dat_byte(0b10000000);
-			_write_dat_byte(0b10000000);
-			_write_dat_byte(0b10000000);
-			_write_dat_byte(0b01111111);
-		break;
-		case 21:
-			_write_dat_byte(0b00011111);
-			_write_dat_byte(0b01100000);
-			_write_dat_byte(0b10000000);
-			_write_dat_byte(0b01100000);
-			_write_dat_byte(0b00011111);
-		break;
-		case 22:
-			_write_dat_byte(0b00011111);
-			_write_dat_byte(0b01100000);
-			_write_dat_byte(0b10000000);
-			_write_dat_byte(0b01100000);
-			_write_dat_byte(0b00011100);
-			_write_dat_byte(0b01100000);
-			_write_dat_byte(0b10000000);
-			_write_dat_byte(0b01100000);
-			_write_dat_byte(0b00011111);
-		break;
-		}
-	_write_dat_byte(0x00);
-}
+void oled_write_char(char c) {
+	if (c == '\n') {
+		cursor_column = 0;
+		cursor_row++;
+		oled_position(cursor_row, cursor_column);
 
-/*
-	while(1) {
+		if (cursor_row >= SCREEN_ROWS) {
+			oled_clear();
+			cursor_row = 0;
+		}
+	} else {
+		if (cursor_column >= SCREEN_COLUMNS) {
+			cursor_column = 0;
+			cursor_row++;
+
+			if (cursor_row >= SCREEN_ROWS) {
+				//oled_clear();
+				cursor_row = 0;
+			}
+
+			oled_position(cursor_row, cursor_column);
+		}
 		
-		_write_cmd_byte(0x10);
-		_write_cmd_byte(0x00);
+		int index = c & 0x7F;
+		bool inverted = (c & 0x80) != 0;
 
-		int a = -joystick_get_x();
-		printf("%d\r\n", a);
-
-		for(int line = 0; line < 8; line++) {
-			_write_cmd_byte(0xB0 | line);
-
-
-			for(int x = 0; x < a; x++) {
-				_write_dat_byte(0xFF);
-			}
-			for(int x = a; x < 128; x++) {
-				_write_dat_byte(0x00);
+		for(int col = 0; col < 8; col++) {
+			if (inverted) {
+				_write_dat_byte(~pgm_read_byte(&(font8x8_basic[(int)index][col])));
+			} else {
+				_write_dat_byte(pgm_read_byte(&(font8x8_basic[(int)index][col])));
 			}
 		}
 
-		_delay_ms(30);
+		cursor_column++;
 	}
-	*/
+}

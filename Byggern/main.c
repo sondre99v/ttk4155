@@ -14,43 +14,54 @@
 #include "drivers/xmem.h"
 #include "drivers/xadc.h"
 #include "drivers/touch.h"
+#include "drivers/display.h"
+#include "drivers/joystick.h"
+
+#include "game/menu.h"
 
 
 #include <stdlib.h>
 
 
-volatile char* sram = (char*)0x1800;
+//volatile char* sram = (char*)0x1800;
 	
 
 int main(void)
 {
+	PORTE |= 1;
+	
 	usart_init(9600);
 
 	xmem_init();
-	oled_init();
-	oled_position(0,0);
-	oled_print(8);
-	oled_print(5);
-	oled_print(9);
-	//joystick_init();
+
+	display_init();
+
+	display_clear();
+	
+	menu_init();
+
+	//oled_init();
+	
+	joystick_init();
+	joystick_calibrate_center();
 
 	//sei();
 
 	//xmem_test();
 
-	//joystick_calibrate_center();
-
     while (1) 
-    {	
-		int dir;
-		//dir = joystick_get_direction();
+    {
+		int choice = menu_handle_input();
 
+		if (choice != -1) {
+			display_set_position(0, 6);
+			display_set_color(COLOR_NORMAL);
+			printf("Selected: %d", choice);
+		}
 
+	    display_repaint();
 
-		//printf("Dir: %d\n\r", dir);
-
-		_delay_ms(10);
-
+		_delay_ms(20);
     }
 }
 
