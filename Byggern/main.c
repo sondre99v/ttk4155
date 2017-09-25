@@ -28,8 +28,6 @@
 #include <stdlib.h>
 
 //volatile char* sram = (char*)0x1800;
-	
-volatile uint8_t rx_data = 0;
 
 int main(void)
 {
@@ -47,14 +45,13 @@ int main(void)
 		display_set_position(0, 0);
 		printf("Loading: %d%%", i);
 		display_repaint();
-		_delay_ms(20);
+		_delay_ms(5);
 	}
 
 	uint8_t count = 0;
     while (1)
     {
-	
-		_delay_ms(1000);
+		_delay_ms(100);
 
 		CanFrame_t frame = {
 			.id = 0x014,
@@ -62,21 +59,23 @@ int main(void)
 			.data.u8[0] = count
 		};
 
-		can_tx_message(frame);
-		
+		can_tx_message(&frame);
+		frame.data.u8[0] = 0;
 
+		_delay_ms(10);
 
-		display_set_position(0, 0);
-		printf("RX data = 0x%02X", rx_data);
-		
+		if(can_rx_message(&frame)) {
+			display_set_position(0, 0);
+			printf("RX data = 0x%02X", frame.data.u8[0]);
+		} else {
+			display_set_position(0, 0);
+			printf("No RX");
+		}
+
 	    display_repaint();
 
 		count++;
     }
-}
-
-void can_rx_callback(CanFrame_t rx_frame) {
-	rx_data = rx_frame.data.u8[0];
 }
 
 USART0_RX_HANDLER() {
@@ -86,5 +85,5 @@ USART0_RX_HANDLER() {
 }
 
 ISR(__vector_default) {
-	_delay_us(50);
+	_delay_ms(1000);
 }

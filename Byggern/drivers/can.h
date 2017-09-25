@@ -10,7 +10,7 @@
 #define CAN_H_
 
 #include <stdint.h>
-
+#include <stdbool.h>
 
 typedef union {
 	uint8_t u8[8];
@@ -32,9 +32,9 @@ typedef struct {
 
 void can_init();
 
-void can_tx_message(CanFrame_t tx_frame);
+void can_tx_message(CanFrame_t* tx_frame);
 
-void can_rx_callback(CanFrame_t rx_frame);
+bool can_rx_message(CanFrame_t* rx_frame);
 
 
 
