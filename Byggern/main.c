@@ -10,7 +10,6 @@
 #include <avr/interrupt.h>
 #include <stdio.h>
 
-#include "drivers/usart.h"
 #include "drivers/xmem.h"
 #include "drivers/xadc.h"
 #include "drivers/touch.h"
@@ -31,9 +30,7 @@
 
 int main(void)
 {
-	_delay_ms(50);
 	spi_init();
-	usart_init(9600);
 	xmem_init();
 	display_init();
 	can_init();
@@ -45,7 +42,7 @@ int main(void)
 		display_set_position(0, 0);
 		printf("Loading: %d%%", i);
 		display_repaint();
-		_delay_ms(5);
+		//_delay_ms(5);
 	}
 
 	uint8_t count = 0;
@@ -54,18 +51,21 @@ int main(void)
 		_delay_ms(100);
 
 		CanFrame_t frame = {
-			.id = 0x014,
+			.id = 0x7FF,
 			.length = 0x01,
-			.data.u8[0] = count
+			.data.u8[0] = 0xF0
 		};
 
 		can_tx_message(&frame);
 		frame.data.u8[0] = 0;
 
 		_delay_ms(10);
+		display_clear();
 
 		if(can_rx_message(&frame)) {
 			display_set_position(0, 0);
+			printf("TX data = 0x%02X", count);
+			display_set_position(0, 1);
 			printf("RX data = 0x%02X", frame.data.u8[0]);
 		} else {
 			display_set_position(0, 0);
@@ -76,12 +76,6 @@ int main(void)
 
 		count++;
     }
-}
-
-USART0_RX_HANDLER() {
-	char c = UDR0;
-	
-	printf("You pressed: %c, ( = %d)\n\r", c, c);
 }
 
 ISR(__vector_default) {

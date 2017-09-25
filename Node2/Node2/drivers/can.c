@@ -13,7 +13,7 @@
 void can_init() {
 	mcp_reset();
 
-	mcp_write(0x2A, (0 << 6) | 0x20); // Write Config 1
+	mcp_write(0x2A, 0x20); // Write Config 1
 	mcp_write(0x29, 0x92); // Write Config 2
 	mcp_write(0x28, 0xC2); // Write Config 3
 	
@@ -37,18 +37,19 @@ void can_init() {
 	mcp_write(0x23, 0x00); // Clear ID masks
 	
 
-	mcp_write(0x0F, 0x04); // Enable can controller
+	mcp_write(0x0F, 0x04); // Enable can controller with loopback
 }
 
 void can_tx_message(CanFrame_t* tx_frame) {
 
-	mcp_write(0x0F, 0x00); // Disable can controller
-	
 	// Setup TX buffer 0
 	mcp_write(0x30, 0x03); // Set message to highest priority, and clear the request to send flag
-
+	
 	mcp_write(0x31, (tx_frame->id >> 3) & 0xFF); // Set standard id
 	mcp_write(0x32, (tx_frame->id & 0x07) << 5);
+	
+	mcp_write(0x33, 0x00); // Set extended id bits to 0
+	mcp_write(0x34, 0x00);
 	
 	mcp_write(0x35, tx_frame->length); // Set data length, and mode to normal frame
 	
@@ -56,8 +57,6 @@ void can_tx_message(CanFrame_t* tx_frame) {
 		mcp_write(0x36 + i, tx_frame->data.u8[i]);
 	}
 	
-	mcp_write(0x0F, 0x04); // Enable can controller
-
 	mcp_request_to_send(true, false, false);
 }
 
@@ -66,8 +65,8 @@ bool can_rx_message(CanFrame_t* rx_frame) {
 		return false;
 	}
 	
-	rx_frame->id = mcp_read(0x61) << 8;
-	rx_frame->id |= mcp_read(0x62);
+	rx_frame->id = mcp_read(0x61) << 3;
+	rx_frame->id |= mcp_read(0x62) >> 5;
 
 	rx_frame->length = mcp_read(0x65);
 	
