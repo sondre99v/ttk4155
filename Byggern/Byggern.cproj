@@ -135,6 +135,12 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="drivers\can.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="drivers\can.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="drivers\display.c">
       <SubType>compile</SubType>
     </Compile>

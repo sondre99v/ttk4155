@@ -15,7 +15,7 @@ typedef enum {
 	MCP_CMD_WRITE = 0x02,
 	MCP_CMD_READ = 0x03,
 	MCP_CMD_BIT_MODIFY = 0x05,
-	MCP_CMD_REQ_SEND_base = 0x10,
+	MCP_CMD_REQ_SEND_base = 0x80,
 	MCP_CMD_READ_STATUS = 0xA0,
 	MCP_CMD_RESET = 0xC0
 } McpCommand_t;
