@@ -47,10 +47,12 @@ int main(void)
 		//_delay_ms(5);
 	}
 
-	uint8_t count = 0;
+	int score = 10;
+	int holdoff = 0;
+
     while (1)
     {
-		_delay_ms(10);
+		//_delay_ms(10);
 
 		CanFrame_t frame = {
 			.id = 0x100,
@@ -65,17 +67,27 @@ int main(void)
 		if(can_rx_message(&frame)) {
 			display_clear();
 			display_set_position(0, 0);
-			printf("X = 0x%02X", frame.data.u8[0]);
+			printf("VALUE = 0x%04X", frame.data.u16[0]);
 			display_set_position(0, 1);
-			printf("Y = 0x%02X", frame.data.u8[1]);
+			printf("POS = %d", frame.data.i16[1]);
+			
+			display_set_position(0, 3);
+			printf("SCORE: %d", score);
+
+			if (holdoff > 0) {
+				holdoff--;
+			} else {
+				if (frame.data.u16[0] < 0x20) {
+					score--;
+					if (score < 0) {
+						score = 10;
+					}
+					holdoff = 100;
+				}
+			}
+
+			display_repaint();
 		}
-		
-		display_set_position(0, 2);
-		printf("Err: 0x%02X", mcp_read(0x0E));
-
-	    display_repaint();
-
-		count++;
     }
 }
 

@@ -15,12 +15,15 @@
 #include "drivers/mcp2515.h"
 #include "drivers/can.h"
 #include "drivers/pwm.h"
+#include "drivers/adc.h"
 
 int main(void)
 {
 	spi_init();
 	can_init();
 	pwm_init();
+	adc_init();
+	//adc_init_channel(AdcCh_CH8);
 
 	sei();
 
@@ -41,8 +44,10 @@ int main(void)
 			pwm_set_servo_deflection(servo_defl);
 			
 			frame.id = 0x120;
+			frame.length = 0x4;
 			
-			frame.data.u16[0] = joystick_pos;
+			frame.data.u16[0] = adc_read(AdcCh_CH8);
+			frame.data.i16[1] = servo_defl;
 
 			can_tx_message(&frame);
 		}

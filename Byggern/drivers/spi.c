@@ -21,7 +21,7 @@ void spi_init() {
 	SPI_DDR &= ~(1 << MISO_PIN);
 	SPI_PORT |= (1 << SS_PIN);
 
-	SPCR = (1 << MSTR) | (1<< CPHA)|(1 << CPOL) | (1 << SPE) | (0 << DORD);
+	SPCR = (1 << MSTR) | (1<< CPHA) | (1 << CPOL) | (1 << SPE) | (0 << DORD);
 }
 
 void spi_trancieve(uint8_t* tx_buffer, uint8_t* rx_buffer, int length) {

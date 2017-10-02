@@ -2,6 +2,8 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
+drivers\adc.c
+
 drivers\can.c
 
 drivers\mcp2515.c
