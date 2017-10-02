@@ -13,6 +13,8 @@
 void can_init() {
 	mcp_reset();
 
+	mcp_write(0x0F, 0x80); // Enter configuration mode
+
 	mcp_write(0x2A, (0 << 6) | 0x20); // Write Config 1
 	mcp_write(0x29, 0x92); // Write Config 2
 	mcp_write(0x28, 0xC2); // Write Config 3
@@ -41,22 +43,18 @@ void can_init() {
 }
 
 void can_tx_message(CanFrame_t* tx_frame) {
-
-	mcp_write(0x0F, 0x00); // Disable can controller
 	
 	// Setup TX buffer 0
 	mcp_write(0x30, 0x03); // Set message to highest priority, and clear the request to send flag
 
 	mcp_write(0x31, (tx_frame->id >> 3) & 0xFF); // Set standard id
-	mcp_write(0x32, (tx_frame->id & 0x07) << 5);
+	mcp_write(0x32, (tx_frame->id << 5) & 0xE0);
 	
 	mcp_write(0x35, tx_frame->length); // Set data length, and mode to normal frame
 	
 	for(int i = 0; i < tx_frame->length; i++) {
 		mcp_write(0x36 + i, tx_frame->data.u8[i]);
 	}
-	
-	mcp_write(0x0F, 0x04); // Enable can controller
 
 	mcp_request_to_send(true, false, false);
 }

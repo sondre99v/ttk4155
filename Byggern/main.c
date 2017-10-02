@@ -48,29 +48,28 @@ int main(void)
 	uint8_t count = 0;
     while (1)
     {
-		_delay_ms(100);
+		_delay_ms(481);
 
 		CanFrame_t frame = {
-			.id = 0x7FF,
-			.length = 0x01,
-			.data.u8[0] = 0xF0
+			.id = 0x123,
+			.length = 0x1,
+			.data.u32[0] = count
 		};
 
 		can_tx_message(&frame);
 		frame.data.u8[0] = 0;
 
 		_delay_ms(10);
-		display_clear();
-
+		
 		if(can_rx_message(&frame)) {
+			display_clear();
 			display_set_position(0, 0);
-			printf("TX data = 0x%02X", count);
-			display_set_position(0, 1);
+			//printf("TX data = 0x%02X", count);
 			printf("RX data = 0x%02X", frame.data.u8[0]);
-		} else {
-			display_set_position(0, 0);
-			printf("No RX");
 		}
+		
+		display_set_position(0, 1);
+		printf("Err: 0x%02X", mcp_read(0x0E));
 
 	    display_repaint();
 

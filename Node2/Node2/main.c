@@ -19,15 +19,23 @@ int main(void)
 {
 	spi_init();
 	can_init();
-	
-    while (1) 
-    {
-		CanFrame_t frame;
-		while(!can_rx_message(&frame)) { };
 
-		frame.id = 0x002;
-		frame.data.u8[0] ^= 0xFF;
+	sei();
 
-		can_tx_message(&frame);
+	CanFrame_t frame;
+
+	while (1)
+	{
+		_delay_ms(10);
+
+		if (can_rx_message(&frame)) {
+			frame.id = 0x120;
+			
+			for(int i = 0; i < frame.length; i++) {
+				frame.data.u8[i] = ~frame.data.u8[i];
+			}
+
+			can_tx_message(&frame);
+		}
     }
 }
