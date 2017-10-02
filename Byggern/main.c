@@ -35,6 +35,8 @@ int main(void)
 	display_init();
 	can_init();
 
+	joystick_calibrate_center();
+
 	sei();
 
 	for(int i=0;i<101;i++) {
@@ -48,27 +50,27 @@ int main(void)
 	uint8_t count = 0;
     while (1)
     {
-		_delay_ms(481);
+		_delay_ms(10);
 
 		CanFrame_t frame = {
-			.id = 0x123,
-			.length = 0x1,
-			.data.u32[0] = count
+			.id = 0x100,
+			.length = 0x2,
+			.data.u8[0] = joystick_get_x(),
+			.data.u8[1] = joystick_get_y()
 		};
 
 		can_tx_message(&frame);
 		frame.data.u8[0] = 0;
-
-		_delay_ms(10);
 		
 		if(can_rx_message(&frame)) {
 			display_clear();
 			display_set_position(0, 0);
-			//printf("TX data = 0x%02X", count);
-			printf("RX data = 0x%02X", frame.data.u8[0]);
+			printf("X = 0x%02X", frame.data.u8[0]);
+			display_set_position(0, 1);
+			printf("Y = 0x%02X", frame.data.u8[1]);
 		}
 		
-		display_set_position(0, 1);
+		display_set_position(0, 2);
 		printf("Err: 0x%02X", mcp_read(0x0E));
 
 	    display_repaint();

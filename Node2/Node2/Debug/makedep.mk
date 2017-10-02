@@ -6,6 +6,8 @@ drivers\can.c
 
 drivers\mcp2515.c
 
+drivers\pwm.c
+
 drivers\spi.c
 
 drivers\usart.c

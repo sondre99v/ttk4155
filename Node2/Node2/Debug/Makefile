@@ -40,6 +40,7 @@ SUBDIRS :=  \
 C_SRCS +=  \
 ../drivers/can.c \
 ../drivers/mcp2515.c \
+../drivers/pwm.c \
 ../drivers/spi.c \
 ../drivers/usart.c \
 ../main.c
@@ -54,6 +55,7 @@ ASM_SRCS +=
 OBJS +=  \
 drivers/can.o \
 drivers/mcp2515.o \
+drivers/pwm.o \
 drivers/spi.o \
 drivers/usart.o \
 main.o
@@ -61,6 +63,7 @@ main.o
 OBJS_AS_ARGS +=  \
 drivers/can.o \
 drivers/mcp2515.o \
+drivers/pwm.o \
 drivers/spi.o \
 drivers/usart.o \
 main.o
@@ -68,6 +71,7 @@ main.o
 C_DEPS +=  \
 drivers/can.d \
 drivers/mcp2515.d \
+drivers/pwm.d \
 drivers/spi.d \
 drivers/usart.d \
 main.d
@@ -75,6 +79,7 @@ main.d
 C_DEPS_AS_ARGS +=  \
 drivers/can.d \
 drivers/mcp2515.d \
+drivers/pwm.d \
 drivers/spi.d \
 drivers/usart.d \
 main.d
@@ -93,6 +98,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 
