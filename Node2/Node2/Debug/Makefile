@@ -40,6 +40,9 @@ SUBDIRS :=  \
 C_SRCS +=  \
 ../drivers/adc.c \
 ../drivers/can.c \
+../drivers/motor.c \
+../drivers/shooter.c \
+../drivers/twi.c \
 ../drivers/mcp2515.c \
 ../drivers/pwm.c \
 ../drivers/spi.c \
@@ -56,6 +59,9 @@ ASM_SRCS +=
 OBJS +=  \
 drivers/adc.o \
 drivers/can.o \
+drivers/motor.o \
+drivers/shooter.o \
+drivers/twi.o \
 drivers/mcp2515.o \
 drivers/pwm.o \
 drivers/spi.o \
@@ -65,6 +71,9 @@ main.o
 OBJS_AS_ARGS +=  \
 drivers/adc.o \
 drivers/can.o \
+drivers/motor.o \
+drivers/shooter.o \
+drivers/twi.o \
 drivers/mcp2515.o \
 drivers/pwm.o \
 drivers/spi.o \
@@ -74,6 +83,9 @@ main.o
 C_DEPS +=  \
 drivers/adc.d \
 drivers/can.d \
+drivers/motor.d \
+drivers/shooter.d \
+drivers/twi.d \
 drivers/mcp2515.d \
 drivers/pwm.d \
 drivers/spi.d \
@@ -83,6 +95,9 @@ main.d
 C_DEPS_AS_ARGS +=  \
 drivers/adc.d \
 drivers/can.d \
+drivers/motor.d \
+drivers/shooter.d \
+drivers/twi.d \
 drivers/mcp2515.d \
 drivers/pwm.d \
 drivers/spi.d \
@@ -103,6 +118,12 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
+
+
+
+
 
 
 

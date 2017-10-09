@@ -6,6 +6,12 @@ drivers\adc.c
 
 drivers\can.c
 
+drivers\motor.c
+
+drivers\shooter.c
+
+drivers\twi.c
+
 drivers\mcp2515.c
 
 drivers\pwm.c

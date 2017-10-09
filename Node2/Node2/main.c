@@ -16,19 +16,28 @@
 #include "drivers/can.h"
 #include "drivers/pwm.h"
 #include "drivers/adc.h"
+#include "drivers/motor.h"
+#include "drivers/shooter.h"
 
 int main(void)
 {
+	CanFrame_t frame;
+
 	spi_init();
 	can_init();
 	pwm_init();
 	adc_init();
 	//adc_init_channel(AdcCh_CH8);
+	motor_init();
+	shooter_init();
 
 	sei();
 
-	CanFrame_t frame;
+	
+	motor_enable();
 
+	bool shot = false;
+	
 	while (1)
 	{
 		_delay_ms(10);
@@ -43,6 +52,25 @@ int main(void)
 
 			pwm_set_servo_deflection(servo_defl);
 			
+			uint8_t direction = (frame.data.i8[0] < 0);
+
+			uint8_t power = frame.data.i8[0];
+			if (direction) {
+				power = -frame.data.i8[0];
+			}
+
+			motor_set(power, (frame.data.i8[0] < 0) ? DIR_LEFT : DIR_RIGHT);
+			
+			if (frame.data.u8[2] > 0) {
+				if (!shot) {
+					shooter_shoot();
+					shot = true;
+				}
+			} else {
+				shot = false;
+			}
+
+
 			frame.id = 0x120;
 			frame.length = 0x4;
 			

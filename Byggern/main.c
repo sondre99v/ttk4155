@@ -56,9 +56,10 @@ int main(void)
 
 		CanFrame_t frame = {
 			.id = 0x100,
-			.length = 0x2,
+			.length = 0x3,
 			.data.u8[0] = joystick_get_x(),
-			.data.u8[1] = joystick_get_y()
+			.data.u8[1] = joystick_get_y(),
+			.data.u8[2] = joystick_get_button()
 		};
 
 		can_tx_message(&frame);
@@ -72,7 +73,8 @@ int main(void)
 			printf("POS = %d", frame.data.i16[1]);
 			
 			display_set_position(0, 3);
-			printf("SCORE: %d", score);
+			printf("SCORE: %d, %d", score, (int)joystick_get_button());
+
 
 			if (holdoff > 0) {
 				holdoff--;
