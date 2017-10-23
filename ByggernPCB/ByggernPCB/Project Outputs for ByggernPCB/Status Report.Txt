@@ -1,0 +1,15 @@
+Output: Gerber Files
+Type  : Gerber
+From  : Variant [[No Variations]] of PCB Document [ByggernPCB_R01.PcbDoc]
+   Generated File[ByggernPCB_R01.GTL]
+   Generated File[ByggernPCB_R01.GBL]
+   Generated File[ByggernPCB_R01.GBO]
+   Generated File[ByggernPCB_R01.RUL]
+   Generated File[ByggernPCB_R01.EXTREP]
+   Generated File[ByggernPCB_R01.REP]
+
+
+Files Generated   : 6
+Documents Printed : 0
+
+Finished Output Generation At 19.44.16 On 16.10.2017

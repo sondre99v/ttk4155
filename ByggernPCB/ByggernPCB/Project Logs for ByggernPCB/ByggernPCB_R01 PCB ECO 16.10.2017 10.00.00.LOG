@@ -1,0 +1,34 @@
+Removed Pin From Net: NetName=R\e\s\e\t\ Pin=Sw1-2
+Removed Pin From Net: NetName=NetR2_2 Pin=Sw1-3
+Removed Pin From Net: NetName=NetR2_2 Pin=Sw1-4
+Change Component Footprint: Designator=Sw1 Old Footprint= New Footprint=Microswitch
+Added Component: Designator=J?(Banana-plug)
+Add component. Clean all parameters for all variants
+Added Component: Designator=J?(Banana-plug)
+Add component. Clean all parameters for all variants
+Added Component: Designator=J?(Banana-plug)
+Add component. Clean all parameters for all variants
+Added Component: Designator=J?(Banana-plug)
+Add component. Clean all parameters for all variants
+Added Component: Designator=J?(Screw connector)
+Add component. Clean all parameters for all variants
+Added Pin To Net: NetName=GND Pin=J?-1
+Added Pin To Net: NetName=NetC1_1 Pin=J?-1
+Added Pin To Net: NetName=NetR2_2 Pin=Sw1-2
+Added Pin To Net: NetName=NetR2_2 Pin=Sw1-2
+Added Pin To Net: NetName=NetJ3_1 Pin=J3-1
+Added Pin To Net: NetName=NetJ3_1 Pin=J?-1
+Added Net: Name=NetJ3_1
+Added Pin To Net: NetName=NetJ?_1 Pin=J?-1
+Added Pin To Net: NetName=NetJ?_1 Pin=Rel1-1
+Added Net: Name=NetJ?_1
+Added Pin To Net: NetName=NetJ?_2 Pin=J?-2
+Added Pin To Net: NetName=NetJ?_2 Pin=R6-1
+Added Pin To Net: NetName=NetJ?_2 Pin=U6-7
+Added Net: Name=NetJ?_2
+Added Member To Class: ClassName=ByggernBreadbord Member=Component J? Banana
+Added Member To Class: ClassName=ByggernBreadbord Member=Component J? Banana
+Added Member To Class: ClassName=ByggernBreadbord Member=Component J? Banana
+Added Member To Class: ClassName=ByggernBreadbord Member=Component J? Banana
+Added Member To Class: ClassName=ByggernBreadbord Member=Component J? Screw-terminal
+Added Member To Class: ClassName=ByggernBreadbord Member=Component U3 8Kx8 SRAM

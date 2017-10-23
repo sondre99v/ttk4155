@@ -1,0 +1,57 @@
+Protel Design System Design Rule Check
+PCB File : C:\Users\muryr\Documents\TTK4155 Industrielle og innebygde datasystemers konstruksjon\ttk4155\ByggernPCB\ByggernPCB\ByggernPCB_R01.PcbDoc
+Date     : 16.10.2017
+Time     : 11.02.42
+
+Processing Rule : Clearance Constraint (Gap=0.254mm) (All),(All)
+Rule Violations :0
+
+Processing Rule : Short-Circuit Constraint (Allowed=No) (All),(All)
+Rule Violations :0
+
+Processing Rule : Un-Routed Net Constraint ( (All) )
+Rule Violations :0
+
+Processing Rule : Modified Polygon (Allow modified: No), (Allow shelved: No)
+Rule Violations :0
+
+Processing Rule : Width Constraint (Min=0.254mm) (Max=1mm) (Preferred=0.5mm) (All)
+Rule Violations :0
+
+Processing Rule : Width Constraint (Min=0.254mm) (Max=0.254mm) (Preferred=0.254mm) (All)
+Rule Violations :0
+
+Processing Rule : Power Plane Connect Rule(Relief Connect )(Expansion=0.508mm) (Conductor Width=0.254mm) (Air Gap=0.254mm) (Entries=4) (All)
+Rule Violations :0
+
+Processing Rule : Hole Size Constraint (Min=0.025mm) (Max=2.54mm) (All)
+   Violation between Hole Size Constraint: (8mm > 2.54mm) Pad J10-(61.375mm,115.45mm) on Multi-Layer Actual Hole Size = 8mm
+   Violation between Hole Size Constraint: (8mm > 2.54mm) Pad J11-(46.55mm,115.45mm) on Multi-Layer Actual Hole Size = 8mm
+   Violation between Hole Size Constraint: (8mm > 2.54mm) Pad J8-(63.825mm,35.5mm) on Multi-Layer Actual Hole Size = 8mm
+   Violation between Hole Size Constraint: (8mm > 2.54mm) Pad J9-(47.2mm,35.5mm) on Multi-Layer Actual Hole Size = 8mm
+Rule Violations :4
+
+Processing Rule : Hole To Hole Clearance (Gap=0.254mm) (All),(All)
+Rule Violations :0
+
+Processing Rule : Minimum Solder Mask Sliver (Gap=0.254mm) (All),(All)
+Rule Violations :0
+
+Processing Rule : Silk To Solder Mask (Clearance=0.254mm) (IsPad),(All)
+   Violation between Silk To Solder Mask Clearance Constraint: (0.169mm < 0.254mm) Between Track (140.681mm,42.724mm)(144.851mm,42.724mm) on Top Overlay 1 And Pad Vreg1-3(142.766mm,43.994mm) on Multi-Layer [Top Overlay 1] to [Top Solder 1] clearance [0.169mm]
+   Violation between Silk To Solder Mask Clearance Constraint: (0.17mm < 0.254mm) Between Track (140.681mm,50.344mm)(144.851mm,50.344mm) on Top Overlay 1 And Pad Vreg1-1(142.766mm,49.074mm) on Multi-Layer [Top Overlay 1] to [Top Solder 1] clearance [0.17mm]
+Rule Violations :2
+
+Processing Rule : Silk to Silk (Clearance=0.254mm) (All),(All)
+Rule Violations :0
+
+Processing Rule : Net Antennae (Tolerance=0mm) (All)
+Rule Violations :0
+
+Processing Rule : Height Constraint (Min=0mm) (Max=25.4mm) (Prefered=12.7mm) (All)
+Rule Violations :0
+
+
+Violations Detected : 6
+Waived Violations : 0
+Time Elapsed        : 00:00:02

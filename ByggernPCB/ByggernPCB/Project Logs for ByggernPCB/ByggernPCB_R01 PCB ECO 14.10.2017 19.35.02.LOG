@@ -1,0 +1,11 @@
+Change Component Comment : Designator=C1 Old Comment=? ?F New Comment=1uF
+Change Component Comment : Designator=C4 Old Comment=? ?F New Comment=22pF
+Change Component Comment : Designator=C5 Old Comment=? ?F New Comment=22pF
+Change Component Comment : Designator=C8 Old Comment=? ?F New Comment=22pF
+Change Component Comment : Designator=C9 Old Comment=? ?F New Comment=22pF
+Change Component Comment : Designator=C2 Old Comment=? ?F New Comment=100nF
+Change Component Comment : Designator=C3 Old Comment=? ?F New Comment=100nF
+Change Component Comment : Designator=C6 Old Comment=? ?F New Comment=100nF
+Change Component Comment : Designator=C7 Old Comment=? ?F New Comment=100nF
+Added Pin To Net: NetName=NetR2_2 Pin=Sw1-3
+Added Pin To Net: NetName=R\e\s\e\t\ Pin=Sw1-4
