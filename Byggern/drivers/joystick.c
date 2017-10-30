@@ -10,14 +10,15 @@
 #include "xadc.h"
 
 #include <avr/io.h>
+#include <stdio.h>
 #include <math.h>
 
-#define BUTTON_PORT PORTE
-#define BUTTON_PINR PINE
+#define BUTTON_PORT PORTB
+#define BUTTON_PINR PINB
 #define BUTTON_PIN 0
 
-#define ADC_CH_X XAdcCh_CH1
-#define ADC_CH_Y XAdcCh_CH2
+#define ADC_CH_X XAdcCh_CH2
+#define ADC_CH_Y XAdcCh_CH1
 
 #define clamp(x, min, max) ((x) < (min) ? (min) : ((x) > (max) ? (max) : (x)))
 
@@ -28,7 +29,7 @@ static int8_t calibration_offset_y = 0;
 
 
 void joystick_init() {
-	PORTE |= (1 << BUTTON_PIN);
+	DDRE &= (1 << BUTTON_PIN);
 }
 
 void joystick_calibrate_center() {

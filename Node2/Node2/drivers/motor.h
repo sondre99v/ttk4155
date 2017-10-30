@@ -24,5 +24,8 @@ void motor_enable();
 void motor_disable();
 void motor_set(uint8_t speed, motor_direction_t direction);
 
+void motor_reset_encoder();
+int16_t motor_read_encoder();
+
 
 #endif /* MOTOR_H_ */

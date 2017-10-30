@@ -33,8 +33,11 @@ int main(void)
 	spi_init();
 	xmem_init();
 	display_init();
-	can_init();
+	display_clear();
 
+	can_init();
+	
+	joystick_init();
 	joystick_calibrate_center();
 
 	sei();
@@ -68,7 +71,7 @@ int main(void)
 		if(can_rx_message(&frame)) {
 			display_clear();
 			display_set_position(0, 0);
-			printf("VALUE = 0x%04X", frame.data.u16[0]);
+			printf("VALUE = %d", frame.data.i16[0]);
 			display_set_position(0, 1);
 			printf("POS = %d", frame.data.i16[1]);
 			

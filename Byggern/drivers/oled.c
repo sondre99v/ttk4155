@@ -23,13 +23,22 @@ static uint8_t cursor_column = 0;
 volatile uint8_t* OLED_CMD_ADDR = (uint8_t*)0x1000;
 volatile uint8_t* OLED_DAT_ADDR = (uint8_t*)0x1200;
 
+uint8_t _reverse_byte(uint8_t value) {
+	value = ((value & 0xF0) >> 4) | ((value & 0x0F) << 4);
+	value = ((value & 0xCC) >> 2) | ((value & 0x33) << 2);
+	value = ((value & 0xAA) >> 1) | ((value & 0x55) << 1);
+	return value;
+}
+
 void _write_cmd_byte(uint8_t value) {
-	*OLED_CMD_ADDR = value;
+	// Reverse byte to compensate for HW-error
+	*OLED_CMD_ADDR = _reverse_byte(value);
 	_delay_us(1);
 }
 
 void _write_dat_byte(uint8_t value) {
-	*OLED_DAT_ADDR = value;
+	// Reverse byte to compensate for HW-error
+	*OLED_DAT_ADDR = _reverse_byte(value);
 	_delay_us(1);
 }
 
