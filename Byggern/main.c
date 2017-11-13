@@ -52,11 +52,136 @@ int main(void)
 
 	int score = 10;
 	int holdoff = 0;
-
+	
+	enum Menu {main_menu, play_game, highscore, status, no_menu};
+	
+	Menu menu_current = main_menu;
+	Menu menu_select = play_game;
+	
     while (1)
     {
 		//_delay_ms(10);
-
+		switch (menu_current) {
+			case main_menu:
+				display_clear();
+				display_set_position(0, 0);
+				printf("Main menu:");
+				display_set_position(0, 1);
+				display_set_color(COLOR_HIGHLIGHT);
+				printf("Play game");
+				display_set_color(COLOR_NORMAL);
+				display_set_position(0, 2);
+				printf("Highest score");
+				display_set_position(0, 3);
+				printf("Status");
+				
+				switch (joystick_get_direction()){
+					case JoystickDir_DOWN:
+						menu_select ++;
+						if (menu_select == no_menu) {
+							menu_select = play_game;
+						}
+						if menu_select == play_game{
+							display_set_position(0, 1);
+							display_set_color(COLOR_HIGHLIGHT);
+							printf("Play game");
+							display_set_color(COLOR_NORMAL);
+						}
+						if menu_select == highscore{
+							display_set_position(0, 2);
+							display_set_color(COLOR_HIGHLIGHT);
+							printf("Highest score");
+							display_set_color(COLOR_NORMAL);
+						}
+						if menu_select == status{
+							display_set_position(0, 3);
+							display_set_color(COLOR_HIGHLIGHT);
+							printf("Status");
+							display_set_color(COLOR_NORMAL);
+						}
+						break;
+					case JoystickDir_UP:
+						menu_select --;
+						if (menu_select == no_menu) {
+							menu_select = status;
+						}
+						if menu_select == play_game{
+							display_set_position(0, 1);
+							display_set_color(COLOR_HIGHLIGHT);
+							printf("Play game");
+							display_set_color(COLOR_NORMAL);
+						}
+						if menu_select == highscore{
+							display_set_position(0, 2);
+							display_set_color(COLOR_HIGHLIGHT);
+							printf("Highest score");
+							display_set_color(COLOR_NORMAL);
+						}
+						if menu_select == status{
+							display_set_position(0, 3);
+							display_set_color(COLOR_HIGHLIGHT);
+							printf("Status");
+							display_set_color(COLOR_NORMAL);
+						}
+						break;	
+				}
+				if (joystick_get_direction() == JoystickDir_RIGHT){
+					menu_current = menu_select;
+				}
+				break;
+			case play_game:
+				display_clear();
+				display_set_position(0, 0);
+				printf("Game simulation:");
+				display_set_position(0, 1);
+				break;
+			case highscore:
+				display_clear();
+				display_set_position(0, 0);
+				printf("Highest score: &d", xmem_get_highscore()); //Reads highest score from memory
+				
+				if (joystick_get_direction() == JoystickDir_LEFT){
+					menu_current = main_menu;
+					break;
+				}
+				display_repaint();
+				break;
+			case status:				
+				display_clear();
+				display_set_position(0, 0);
+				printf("Status:");
+				display_set_position(0, 1);
+				if (1){					//CAN OK
+				printf("CAN: OK");
+				} else {
+					printf("CAN: ERROR")
+				}
+				display_set_position(0, 2);
+				if (1){					//Node 2 OK
+					printf("Node 2: OK");
+					} else {
+					printf("Node 2: ERROR")
+				}
+				display_set_position(0, 3);
+				if (1){					//IO OK
+					printf("I/O board: OK");
+					} else {
+					printf("I/O board: ERROR")
+				}
+				display_set_position(0, 4);
+				if (1){					//Encryption OK
+					printf("Encryption: OK");
+					} else {
+					printf("Encryption: ERROR")
+				}
+				if (joystick_get_direction() == JoystickDir_LEFT){
+					menu_current = main_menu;
+					break;
+				}
+				display_repaint();
+				break;
+		}
+		
 		CanFrame_t frame = {
 			.id = 0x100,
 			.length = 0x3,

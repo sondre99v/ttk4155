@@ -12,10 +12,13 @@
 // Address space allocations
 #define display_text_start ((char*)0x1800)
 #define display_text_length 128
+#define highscore_adress 250
 
 
 
 void xmem_init();
+void xmem_set_highscore(uint32_t highscore);
+uint32_t xmem_get_highscore();
 
 void xmem_test();
 
