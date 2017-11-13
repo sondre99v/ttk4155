@@ -53,3 +53,14 @@ void xmem_test(void)
 	}
 	printf("SRAM test completed with \n\r%4d errors in write phase and \n\r%4d errors in retrieval phase\n\n\r", write_errors, retrieval_errors);
 }
+
+
+void xmem_set_highscore(uint32_t highscore){
+	volatile char *ext_ram = (char *) 0x1800; // Start address for the SRAM, store it at 250
+	ext_ram[highscore_adress] = highscore;
+}
+
+uint32_t xmem_get_highscore(){
+	volatile char *ext_ram = (char *) 0x1800; // Start address for the SRAM
+	return ext_ram[highscore_adress];
+}

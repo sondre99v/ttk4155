@@ -50,7 +50,6 @@ int main(void)
 		display_set_position(0, 0);
 		printf("Loading: %d%%", i);
 		display_repaint();
-		//_delay_ms(5);
 	}
 
 	int score = 10;
@@ -60,13 +59,152 @@ int main(void)
 
 	int counter = 0;
 
+
+	// Define menu variables
+	typedef enum {
+		MENU_NONE = 0,
+		MENU_MAIN, 
+		MENU_PLAY_GAME, 
+		MENU_HIGHSCORE, 
+		MENU_STATUS
+	} Menu;
+	
+	Menu menu_current = MENU_MAIN;
+	Menu menu_select = MENU_PLAY_GAME;
+	
     while (1)
     {
-		// Reset loop timer to zero
+	    // Reset loop timer to zero
 	    TCNT1 = 0;
 
-		counter++;
+	    counter++;
 
+		// Run menu handling
+		switch (menu_current) {
+			case MENU_MAIN:
+				display_clear();
+				display_set_position(0, 0);
+				printf("Main menu:");
+				display_set_position(0, 1);
+				display_set_color(COLOR_HIGHLIGHT);
+				printf("Play game");
+				display_set_color(COLOR_NORMAL);
+				display_set_position(0, 2);
+				printf("Highest score");
+				display_set_position(0, 3);
+				printf("Status");
+				
+				switch (joystick_get_direction()) {
+					case JoystickDir_DOWN:
+						menu_select++;
+						if (menu_select == MENU_NONE) {
+							menu_select = MENU_PLAY_GAME;
+						}
+						if (menu_select == MENU_PLAY_GAME) {
+							display_set_position(0, 1);
+							display_set_color(COLOR_HIGHLIGHT);
+							printf("Play game");
+							display_set_color(COLOR_NORMAL);
+						}
+						if (menu_select == MENU_HIGHSCORE) {
+							display_set_position(0, 2);
+							display_set_color(COLOR_HIGHLIGHT);
+							printf("Highest score");
+							display_set_color(COLOR_NORMAL);
+						}
+						if (menu_select == MENU_STATUS) {
+							display_set_position(0, 3);
+							display_set_color(COLOR_HIGHLIGHT);
+							printf("Status");
+							display_set_color(COLOR_NORMAL);
+						}
+						break;
+					case JoystickDir_UP:
+						menu_select --;
+						if (menu_select == MENU_NONE) {
+							menu_select = MENU_STATUS;
+						}
+						if (menu_select == MENU_PLAY_GAME) {
+							display_set_position(0, 1);
+							display_set_color(COLOR_HIGHLIGHT);
+							printf("Play game");
+							display_set_color(COLOR_NORMAL);
+						}
+						if (menu_select == MENU_HIGHSCORE) {
+							display_set_position(0, 2);
+							display_set_color(COLOR_HIGHLIGHT);
+							printf("Highest score");
+							display_set_color(COLOR_NORMAL);
+						}
+						if (menu_select == MENU_STATUS) {
+							display_set_position(0, 3);
+							display_set_color(COLOR_HIGHLIGHT);
+							printf("Status");
+							display_set_color(COLOR_NORMAL);
+						}
+						break;
+					default: break;
+				}
+				if (joystick_get_direction() == JoystickDir_RIGHT){
+					menu_current = menu_select;
+				}
+				break;
+			case MENU_PLAY_GAME:
+				display_clear();
+				display_set_position(0, 0);
+				printf("Game simulation:");
+				display_set_position(0, 1);
+				break;
+			case MENU_HIGHSCORE:
+				display_clear();
+				display_set_position(0, 0);
+				printf("Highest score: %lu", xmem_get_highscore()); //Reads highest score from memory
+				
+				if (joystick_get_direction() == JoystickDir_LEFT){
+					menu_current = MENU_MAIN;
+					break;
+				}
+				display_repaint();
+				break;
+			case MENU_STATUS:				
+				display_clear();
+				display_set_position(0, 0);
+				printf("Status:");
+				display_set_position(0, 1);
+				if (1){					//CAN OK
+				printf("CAN: OK");
+				} else {
+					printf("CAN: ERROR");
+				}
+				display_set_position(0, 2);
+				if (1){					//Node 2 OK
+					printf("Node 2: OK");
+					} else {
+					printf("Node 2: ERROR");
+				}
+				display_set_position(0, 3);
+				if (1){					//IO OK
+					printf("I/O board: OK");
+					} else {
+					printf("I/O board: ERROR");
+				}
+				display_set_position(0, 4);
+				if (1){					//Encryption OK
+					printf("Encryption: OK");
+					} else {
+					printf("Encryption: ERROR");
+				}
+				if (joystick_get_direction() == JoystickDir_LEFT){
+					menu_current = MENU_MAIN;
+					break;
+				}
+				display_repaint();
+				break;
+			default:
+				menu_current = MENU_MAIN; 
+		}
+		
+		
 		// Read sensors
 		int8_t joystick_x = joystick_get_x();
 		uint8_t slider = touch_get_slider(TouchSide_RIGHT);
