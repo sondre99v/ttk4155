@@ -10,7 +10,7 @@
 #define SHOOTER_H_
 
 
-#define SHOOTER_PULSE_DURATION_MS 75
+#define SHOOTER_PULSE_DURATION_MS 100
 
 
 void shooter_init();

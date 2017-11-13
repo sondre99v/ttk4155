@@ -21,8 +21,6 @@
 
 int main(void)
 {
-	CanFrame_t frame;
-
 	spi_init();
 	can_init();
 	pwm_init();
@@ -30,108 +28,111 @@ int main(void)
 	adc_init_channel(AdcCh_CH0);
 	motor_init();
 	shooter_init();
-
 	sei();
 
+	pwm_set_servo_deflection(50);
 	
+
+	// Home the motor to the left edge
 	motor_enable();
+	motor_set(100, DIR_LEFT);
+
+	_delay_ms(200);
+	motor_reset_encoder();
 	
-	
-	while (1)
-	{
-		int size = sizeof(melody) / sizeof(int);
-		for (int thisNote = 0; thisNote < size; thisNote++) {
-			
-			// to calculate the note duration, take one second
-			// divided by the note type.
-			//e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
-			int noteDuration = 1000 / tempo[thisNote];
-			
-			buzz(melody[thisNote], noteDuration);
-			
-			// to distinguish the notes, set a minimum time between them.
-			// the note's duration + 30% seems to work well:
-			int pauseBetweenNotes = noteDuration * 1.30;
-			delay_var_us(1000 * pauseBetweenNotes);
-			
-			// stop the tone playing:
-			//buzz(0, noteDuration);
-			
+	int consecutive_same = 0;
+	int16_t stationary_value = 0;
+	while(consecutive_same < 10) {
+		int16_t encoder_reading = motor_read_encoder();
+		if (encoder_reading == stationary_value) {
+			consecutive_same++;
+		} else {
+			stationary_value = encoder_reading;
 		}
+		_delay_ms(20);
 	}
 	
+	motor_set(0, DIR_LEFT);
 
-	bool shot = false;
-
-	float position_reference = 0;
 	motor_reset_encoder();
-	float integrated_error = 0;
+
 	
-	const float Kp = 0.1;
-	const float Ki = 0.0002;
-	const float Kd = 0.001;
-
-	uint8_t deadband = 55;
-
+	// Define constants and variable for the regulator
+	float position_reference = 0;
+	float integrated_error = 0;
 	float prev_position_error = 0;
 	float velocity = 0.0;
 
+	const float Kp = 0.1 * 33.94;
+	const float Ki = 0.0002 * 33.94;
+	const float Kd = 1 * 33.94;
+	const uint8_t deadband = 55;
 
 	while (1)
 	{
-
 		// Run regulator
-		float position = motor_read_encoder();
+		float enc_pos = motor_read_encoder();
+		float position = 255.0 * enc_pos / -8657.0;
 		float position_error = position_reference - position;
-		integrated_error += position_error;
 		
+		integrated_error += position_error;
 		velocity = 0.95 * velocity + 0.05 * (position_error - prev_position_error);
 
 		float voltage = Ki * integrated_error + Kp * position_error + Kd * velocity;
 
 		prev_position_error = position_error;
 
-		bool direction = (voltage < 0);
+		bool voltage_negative = (voltage < 0);
 
-		if (direction) {
+		if (voltage_negative) {
 			voltage = -voltage;
 		}
 
-		if (voltage > 250 - deadband) {
-			voltage = 250 - deadband;
+		voltage += deadband;
+
+		if (voltage > 200) {
+			voltage = 200;
 		}
 
-		motor_set((uint8_t)voltage + deadband, direction ? DIR_RIGHT : DIR_LEFT);
+		motor_set((uint8_t)voltage, voltage_negative ? DIR_LEFT : DIR_RIGHT);
 
-
+		
+		// Receive a can message
+		CanFrame_t frame;
 		if (can_rx_message(&frame)) {
-			int16_t joystick_pos = (int16_t)(frame.data.i8[0]);
-			//int16_t shoot_frequency = 100 * (int16_t)(frame.data.i8[1] + 100) / 255;
+			// Exctract values from can message
+			int8_t joystick_x = frame.data.i8[0];
+			uint8_t slider = frame.data.u8[1];
+			uint8_t should_shoot = frame.data.u8[2];
 
-			int16_t servo_defl = 100 * joystick_pos / 255;
+
+			// Set servo deflection
+			int16_t servo_defl = 100 * (joystick_x - 40 + 127) / 255;
 			
-			position_reference = joystick_pos * 40;
-
 			if (servo_defl > 100) servo_defl = 100;
 			if (servo_defl < 0) servo_defl = 0;
 
 			pwm_set_servo_deflection(servo_defl);
 			
-			if (frame.data.u8[2] > 0) {
-				if (!shot) {
-					shooter_shoot();
-					shot = true;
-				}
-			} else {
-				shot = false;
+
+			// Shoot if needed
+			if (should_shoot) {
+				shooter_shoot();
 			}
-
-
-			frame.id = 0x120;
-			frame.length = 0x4;
 			
-			frame.data.i16[0] = position;//adc_read(AdcCh_CH0);
-			frame.data.i16[1] = (int16_t)position_reference;
+
+			// Set the position reference for the motor
+			position_reference = slider;
+			if (position_reference < 5) position_reference = 5;
+			if (position_reference > 250) position_reference = 250;
+
+			
+			// Send the return message
+			frame.id = 0x120;
+			frame.length = 0x2;
+			
+			frame.data.u8[0] = adc_read(AdcCh_CH0);
+			frame.data.u8[1] = position;
 
 			can_tx_message(&frame);
 		}
