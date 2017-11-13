@@ -19,6 +19,13 @@
 #define SCREEN_COLUMNS (SCREEN_WIDTH / TEXT_WIDTH)
 #define SCREEN_ROWS (SCREEN_HEIGHT / TEXT_HEIGHT)
 
+typedef struct {
+	uint8_t width;
+	uint8_t height;
+	uint8_t scale;
+	const uint8_t* img_data;
+} Image_t;
+
 void oled_init();
 void oled_clear();
 void oled_home();
@@ -26,5 +33,6 @@ bool oled_position(uint8_t row, uint8_t column);
 void oled_clear_row(uint8_t row);
 
 void oled_write_char(char c);
+void oled_draw_image(Image_t* image, uint8_t x, uint8_t row);
 
 #endif /* OLED_H_ */

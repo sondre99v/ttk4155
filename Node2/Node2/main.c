@@ -66,7 +66,7 @@ int main(void)
 	const float Kp = 0.1 * 33.94;
 	const float Ki = 0.0002 * 33.94;
 	const float Kd = 1 * 33.94;
-	const uint8_t deadband = 55;
+	const uint8_t deadband = 20;
 
 	while (1)
 	{

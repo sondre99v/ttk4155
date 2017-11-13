@@ -151,3 +151,32 @@ void oled_write_char(char c) {
 		cursor_column++;
 	}
 }
+
+uint8_t stretch[] = {
+	0x00, 0x03, 0x0C, 0x0F,
+	0x30, 0x33, 0x3C, 0x3F,
+	0xC0, 0xC3, 0x3C, 0xCF,
+	0xF0, 0xF3, 0xFC, 0xFF
+};
+
+void oled_draw_image(Image_t* image, uint8_t x, uint8_t row) {
+	if (image->scale != 2) {
+		for(int pr = 0; pr < image->height / 8; pr++) {
+			oled_position(row + pr, x);
+			for(int px = 0; px < image->width; px++) {
+				_write_dat_byte(~pgm_read_byte(&image->img_data[pr * image->width + px]));
+			}
+		}
+	} else {
+		for(int pr = 0; pr < 2 * image->height / 8; pr++) {
+			oled_position(row + pr, x);
+			for(int px = 0; px < image->width; px++) {
+				uint8_t b = ~pgm_read_byte(&image->img_data[(pr >> 1) * image->width + px]);
+				uint8_t ns = pr % 2;
+				uint8_t n = (b >> (ns * 4)) & 0x0F; 
+				_write_dat_byte(stretch[n]);
+				_write_dat_byte(stretch[n]);
+			}
+		}
+	}
+}

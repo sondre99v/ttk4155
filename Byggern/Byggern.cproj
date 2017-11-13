@@ -204,6 +204,15 @@
     <Compile Include="game\menu.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="images\img_cat.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="images\img_fireworks.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="images\img_wagon.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
@@ -211,6 +220,7 @@
   <ItemGroup>
     <Folder Include="drivers" />
     <Folder Include="game" />
+    <Folder Include="images" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

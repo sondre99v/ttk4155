@@ -12,13 +12,14 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-const char* menu_heading = "Select item";
+const char* menu_heading = "    Main Menu   ";
 const char* menu_choices[4] = {
-	"Item0",
-	"Item1",
-	"Item2",
-	"Item3"
+	"    Play game   ",
+	"    Highscore   ",
+	"     Status     ",
+	"      ????      "
 };
+
 const int menu_choices_num = 4;
 
 static int selected_choice = 0;
@@ -28,7 +29,7 @@ static bool waiting_for_joystick_return = false;
 
 void _menu_paint_choices() {
 	for(int i = 0; i < menu_choices_num; i++) {
-		display_set_position(3, i + 1);
+		display_set_position(0, i + 2);
 		display_set_color(i == selected_choice ? COLOR_HIGHLIGHT : COLOR_NORMAL);
 		printf("%s", menu_choices[i]);
 	}
@@ -36,8 +37,11 @@ void _menu_paint_choices() {
 
 void menu_init() {
 	display_clear();
-	display_set_position(1, 0);
+	display_set_color(COLOR_NORMAL);
+	display_set_position(0, 0);
 	printf("%s", menu_heading);
+	display_set_position(0, 1);
+	printf("    ~~~~~~~~~   ");
 	_menu_paint_choices();
 }
 
@@ -63,9 +67,13 @@ int8_t menu_handle_input() {
 
 	_menu_paint_choices();
 
-	if (joystick_get_button()) {
-		return selected_choice;
+	if (dir == JoystickDir_LEFT) {
+		return 10;
 	}
+
+	if (dir == JoystickDir_RIGHT) {
+		return selected_choice;
+	}  
 
 	return -1;
 }

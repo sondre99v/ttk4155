@@ -1690,7 +1690,7 @@ int main(void)
      986:	1e 86       	std	Y+14, r1	; 0x0e
      988:	1f 86       	std	Y+15, r1	; 0x0f
      98a:	1c 8a       	std	Y+20, r1	; 0x14
-	const uint8_t deadband = 55;
+	const uint8_t deadband = 20;
 
 	while (1)
 	{
@@ -1864,8 +1864,8 @@ int main(void)
      a9e:	b2 01       	movw	r22, r4
      aa0:	20 e0       	ldi	r18, 0x00	; 0
      aa2:	30 e0       	ldi	r19, 0x00	; 0
-     aa4:	4c e5       	ldi	r20, 0x5C	; 92
-     aa6:	52 e4       	ldi	r21, 0x42	; 66
+     aa4:	40 ea       	ldi	r20, 0xA0	; 160
+     aa6:	51 e4       	ldi	r21, 0x41	; 65
 			voltage = 200;
      aa8:	8f d0       	rcall	.+286    	; 0xbc8 <__addsf3>
      aaa:	4b 01       	movw	r8, r22
