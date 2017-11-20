@@ -84,9 +84,9 @@ void xmem_set_highscore(uint32_t highscore){
 uint32_t xmem_get_highscore(){
 	volatile char *ext_ram = (char *) 0x1800; // Start address for the SRAM
 	uint32_t score = 0;
-	score |= ext_ram[highscore_adress + 0] << 0;
-	score |= ext_ram[highscore_adress + 1] << 8;
-	score |= ext_ram[highscore_adress + 2] << 16;
-	score |= ext_ram[highscore_adress + 3] << 24;
+	score |= (uint32_t)ext_ram[highscore_adress + 0] << 0;
+	score |= (uint32_t)ext_ram[highscore_adress + 1] << 8;
+	score |= (uint32_t)ext_ram[highscore_adress + 2] << 16;
+	score |= (uint32_t)ext_ram[highscore_adress + 3] << 24;
 	return score;
 }

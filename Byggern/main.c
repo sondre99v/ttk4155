@@ -18,9 +18,7 @@
 #include "drivers/joystick.h"
 #include "drivers/can.h"
 #include "drivers/usart.h"
-
 #include "drivers/spi.h"
-
 #include "drivers/mcp2515.h"
 
 #include "game/menu.h"
@@ -36,8 +34,6 @@
 #define LOOP_UPDATE_FREQUENCY_HZ 30
 #define TIMER_TARGET_VALUE (F_CPU / (LOOP_UPDATE_FREQUENCY_HZ * 64))
 
-#define unless(x) if(!(x))
-#define until(x) while(!(x))
 
 //volatile char* sram = (char*)0x1800;
 
@@ -78,13 +74,11 @@ int main(void)
 		}
 	}
 
-	bool joystick_button_prev = false;
-
+	// Game state variables
 	uint32_t score3x = 0;
 	int count_down = 0;
 	int forced_shoot_countdown = 0;
-	int movie_timer = 0;
-
+	bool joystick_button_prev = false;
 	bool game_active = false;
 	bool led_broken = false;
 	uint8_t led_value = 255;
@@ -109,6 +103,7 @@ int main(void)
 	    TCNT1 = 0;
 
 		if (!game_active) {
+			// Run menu
 			uint8_t choice = menu_handle_input();
 			sound_request = menu_get_sound_request();
 
@@ -210,11 +205,12 @@ int main(void)
 				default:
 					break;
 			}
-		
-			unless (menu_current == MENU_CAT || menu_current == MENU_MA_LONG) {
+			
+			// Redraw menu unless one of the static images are showing
+			if (!(menu_current == MENU_CAT || menu_current == MENU_MA_LONG)) {
 				display_repaint();
 			}
-		} else {
+		} else /* Game is active */ { 
 			// Draw game screen
 			display_clear();
 			display_set_color(COLOR_NORMAL);
@@ -227,6 +223,7 @@ int main(void)
 			score3x++;
 			display_repaint();
 			
+			// Draw wagon icon
 			int x = joystick_get_x();
 			int s = joystick_get_button() ? 0 : 3;
 			int i = 1;
@@ -276,13 +273,12 @@ int main(void)
 			if (score3x / 3 > xmem_get_highscore()) {
 				xmem_set_highscore(score3x / 3);
 				menu_current = MENU_FIREWORKS;
-				movie_timer = 0;
 			} else {
 				menu_current = MENU_MAIN;
 			}
 		}
 
-		
+		// Transmit CAN message
 		CanFrame_t tx_frame = {
 			.id = 0x100,
 			.length = 0x4,
@@ -294,8 +290,8 @@ int main(void)
 
 		can_tx_message(&tx_frame);
 		
-		CanFrame_t rx_frame;
 		// Receive CAN message
+		CanFrame_t rx_frame;
 		if(can_rx_message(&rx_frame)) {
 			led_value = (led_value * 5 + 1 * rx_frame.data.u8[0]) / 6;
 			led_broken = (led_value < 0x10);

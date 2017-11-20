@@ -51,37 +51,31 @@ int main(void)
 		
 		CanFrame_t frame;
 		if (can_rx_message(&frame)) {
-			switch (frame.data.u8[3]){
-				case 1:
-					song_play(SONG_END);
-					break;
-				case 2:
-					song_play(SONG_START);
-					break;
-				case 3:
-					song_play(SONG_LOADING);
-					break;
-				case 4:
-					song_play(SONG_BEEP);
-					break;
-				default:
-					joystick_x = frame.data.i8[0];
-					slider_data = frame.data.u8[1];
-					should_shoot = frame.data.u8[2];
+			if (frame.data.u8[3] != 0) {
+				// Message is sound-command
+				switch (frame.data.u8[3]) {
+					case 1: song_play(SONG_END); break;
+					case 2: song_play(SONG_START); break;
+					case 3: song_play(SONG_LOADING); break;
+					case 4: song_play(SONG_BEEP); break;
+				}
+			} else {
+				// Message is movement command
+				joystick_x = frame.data.i8[0];
+				slider_data = frame.data.u8[1];
+				should_shoot = frame.data.u8[2];
 					
-					pwm_set_servo_deflection(joystick_x);
+				pwm_set_servo_deflection(joystick_x);
 					
-					if (should_shoot) shooter_shoot();
+				if (should_shoot) shooter_shoot();
 					
-					// Send the return message
-					frame.id = 0x120;
-					frame.length = 0x2;
+				// Send the return message with measurements
+				frame.id = 0x120;
+				frame.length = 0x2;
 					
-					frame.data.u8[0] = adc_read(AdcCh_CH0);
-					frame.data.u8[1] = motor_get_position();
-					can_tx_message(&frame);
-					
-					break;
+				frame.data.u8[0] = adc_read(AdcCh_CH0);
+				frame.data.u8[1] = motor_get_position();
+				can_tx_message(&frame);
 			}
 		}
 		
