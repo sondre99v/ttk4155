@@ -52,5 +52,8 @@ void song_play(SoundSong_t song) {
 				buzz(i * i * i / 120, 6);
 			}
 			break;
+		case SONG_BEEP:
+			buzz(4000, 20);
+			break;
 	}
 }
