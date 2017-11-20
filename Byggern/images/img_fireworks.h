@@ -33,14 +33,14 @@ Image_t frame_nine = {.width = 128, .height = 64, .img_data = img_data_frame_nin
 
 Image_t* film_firework[] = {
 	//&frame_one,
-	&frame_two,
+	//&frame_two,
 	&frame_three,
 	&frame_four,
 	&frame_five,
 	//&frame_six,
 	&frame_seven,
 	&frame_eight,
-	&frame_nine
+	//&frame_nine
 };
 
 

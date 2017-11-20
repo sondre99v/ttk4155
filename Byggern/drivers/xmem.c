@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "usart.h"
+
 void xmem_init() {
 	// Enable external memory interface
 	MCUCR |= (1 << SRE);
@@ -23,7 +25,7 @@ void xmem_test(void)
 	uint16_t ext_ram_size = 0x100;//0x800;
 	uint16_t write_errors = 0;
 	uint16_t retrieval_errors = 0;
-	printf("Starting SRAM test...\n\r");
+	usart_print_str("Starting SRAM test...\n\r");
 	// rand() stores some internal state, so calling this function in a loop will
 	// yield different seeds each time (unless srand() is called before this function)
 	uint16_t seed = rand();
@@ -34,8 +36,13 @@ void xmem_test(void)
 		ext_ram[i] = some_value;
 		uint8_t retreived_value = ext_ram[i];
 		if (retreived_value != some_value) {
-			printf("Write phase error: ext_ram[%4d] = %02X (should be %02X)\n\r", i,
-			retreived_value, some_value);
+			usart_print_str("Write phase error: ext_ram[");
+			usart_print_uint16(i);
+			usart_print_str("] = ");
+			usart_print_uint8(retreived_value);
+			usart_print_str(" (should be ");
+			usart_print_uint8(some_value);
+			usart_print_str(")\n\r");
 			write_errors++;
 		}
 	}
@@ -46,12 +53,23 @@ void xmem_test(void)
 		uint8_t some_value = rand();
 		uint8_t retreived_value = ext_ram[i];
 		if (retreived_value != some_value) {
-			printf("Retrieval phase error: ext_ram[%4d] = %02X (should be %02X)\n\r",
-			i, retreived_value, some_value);
+			usart_print_str("Retrieval phase error: ext_ram[");
+			usart_print_uint16(i);
+			usart_print_str("] = ");
+			usart_print_uint8(retreived_value);
+			usart_print_str(" (should be ");
+			usart_print_uint8(some_value);
+			usart_print_str(")\n\r");
 			retrieval_errors++;
 		}
 	}
-	printf("SRAM test completed with \n\r%4d errors in write phase and \n\r%4d errors in retrieval phase\n\n\r", write_errors, retrieval_errors);
+
+	
+	usart_print_str("SRAM test completed with \n\r");
+	usart_print_uint16(write_errors);
+	usart_print_str(" errors in write phase and \n\r");
+	usart_print_uint8(retrieval_errors);
+	usart_print_str(" errors in retrieval phase\n\n\r");
 }
 
 

@@ -18,6 +18,7 @@
 #include "drivers/adc.h"
 #include "drivers/motor.h"
 #include "drivers/shooter.h"
+#include "drivers/song.h"
 
 int main(void)
 {
@@ -55,7 +56,6 @@ int main(void)
 	motor_set(0, DIR_LEFT);
 
 	motor_reset_encoder();
-
 	
 	// Define constants and variable for the regulator
 	float position_reference = 0;
@@ -100,41 +100,49 @@ int main(void)
 		// Receive a can message
 		CanFrame_t frame;
 		if (can_rx_message(&frame)) {
-			// Exctract values from can message
-			int8_t joystick_x = frame.data.i8[0];
-			uint8_t slider = frame.data.u8[1];
-			uint8_t should_shoot = frame.data.u8[2];
+			if (frame.data.u8[3] == 1) {
+				song_play(SONG_END);
+			} else if (frame.data.u8[3] == 2) {
+				song_play(SONG_START);
+			} else if (frame.data.u8[3] == 3) {
+				song_play(SONG_LOADING);
+			} else {
+				// Exctract values from can message
+				int8_t joystick_x = frame.data.i8[0];
+				uint8_t slider = frame.data.u8[1];
+				uint8_t should_shoot = frame.data.u8[2];
 
 
-			// Set servo deflection
-			int16_t servo_defl = 100 * (joystick_x - 40 + 127) / 255;
+				// Set servo deflection
+				int16_t servo_defl = 100 * (joystick_x - 40 + 127) / 255;
 			
-			if (servo_defl > 100) servo_defl = 100;
-			if (servo_defl < 0) servo_defl = 0;
+				if (servo_defl > 100) servo_defl = 100;
+				if (servo_defl < 0) servo_defl = 0;
 
-			pwm_set_servo_deflection(servo_defl);
+				pwm_set_servo_deflection(servo_defl);
 			
 
-			// Shoot if needed
-			if (should_shoot) {
-				shooter_shoot();
+				// Shoot if needed
+				if (should_shoot) {
+					shooter_shoot();
+				}
+			
+
+				// Set the position reference for the motor
+				position_reference = slider;
+				if (position_reference < 5) position_reference = 5;
+				if (position_reference > 250) position_reference = 250;
+
+			
+				// Send the return message
+				frame.id = 0x120;
+				frame.length = 0x2;
+			
+				frame.data.u8[0] = adc_read(AdcCh_CH0);
+				frame.data.u8[1] = position;
+
+				can_tx_message(&frame);
 			}
-			
-
-			// Set the position reference for the motor
-			position_reference = slider;
-			if (position_reference < 5) position_reference = 5;
-			if (position_reference > 250) position_reference = 250;
-
-			
-			// Send the return message
-			frame.id = 0x120;
-			frame.length = 0x2;
-			
-			frame.data.u8[0] = adc_read(AdcCh_CH0);
-			frame.data.u8[1] = position;
-
-			can_tx_message(&frame);
 		}
 		
 		_delay_ms(10);

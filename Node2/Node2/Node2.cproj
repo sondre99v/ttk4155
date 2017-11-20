@@ -151,9 +151,12 @@
     <Compile Include="drivers\shooter.h">
       <SubType>compile</SubType>
     </Compile>
-    <None Include="drivers\song.c">
+    <Compile Include="drivers\song.c">
       <SubType>compile</SubType>
-    </None>
+    </Compile>
+    <Compile Include="drivers\song.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="drivers\twi.c">
       <SubType>compile</SubType>
     </Compile>

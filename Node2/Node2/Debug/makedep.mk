@@ -10,6 +10,8 @@ drivers\motor.c
 
 drivers\shooter.c
 
+drivers\song.c
+
 drivers\twi.c
 
 drivers\mcp2515.c

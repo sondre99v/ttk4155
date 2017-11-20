@@ -17,6 +17,7 @@
 #include "drivers/oled.h"
 #include "drivers/joystick.h"
 #include "drivers/can.h"
+#include "drivers/usart.h"
 
 #include "drivers/spi.h"
 
@@ -39,11 +40,18 @@
 
 //volatile char* sram = (char*)0x1800;
 
+uint8_t play_sound_command = 0;
+
 int main(void)
 {
-	spi_init();
 	xmem_init();
-	display_init();
+
+	// Run xmem_test
+	usart_init(9600);
+	xmem_test();
+
+	spi_init();
+	display_init(); // Routs stdout to the display
 	display_clear();
 	can_init();
 	joystick_init();
@@ -55,11 +63,20 @@ int main(void)
 
 	xmem_set_highscore(0);
 
-	for(int i=0;i<101;i++) {
+	{
+		CanFrame_t tx_frame = {
+			.id = 0x100,
+			.length = 4,
+			.data.u8[3] = 3
+		};
+		can_tx_message(&tx_frame);
+
+		for(int i=0;i<101;i++) {
 		
-		display_set_position(0, 0);
-		printf("Loading: %d%%", i);
-		display_repaint();
+			display_set_position(0, 0);
+			printf("Loading: %d%%", i);
+			display_repaint();
+		}
 	}
 
 	bool joystick_button_prev = false;
@@ -107,7 +124,7 @@ int main(void)
 			}
 
 			// Draw current page
-			uint8_t sequence[] = {
+			uint8_t firework_sequence[] = {
 				0,1,0,1,2,1,2,3,2,3,4,3,4,5,4,5,6,5,6,
 			};
 
@@ -128,6 +145,7 @@ int main(void)
 
 					if (count_down <= LOOP_UPDATE_FREQUENCY_HZ) {
 						game_active = true;
+						play_sound_command = 2;
 						forced_shoot_countdown = 3 * LOOP_UPDATE_FREQUENCY_HZ;
 					}
 					break;
@@ -178,8 +196,8 @@ int main(void)
 
 				case MENU_FIREWORKS:
 					
-					for(int i=0;i<sizeof(sequence);i++) {
-						oled_draw_image(film_firework[sequence[i]], 0, 0);
+					for(int i=0;i<sizeof(firework_sequence);i++) {
+						oled_draw_image(film_firework[firework_sequence[i]], 0, 0);
 						_delay_ms(50);
 					}
 					menu_current = MENU_HIGHSCORE;
@@ -239,23 +257,17 @@ int main(void)
 		}
 		joystick_button_prev = joystick_button;
 		
-		uint8_t position_request = slider;// + 30 * sin((float)counter / 30 * 6.28);
-		uint8_t angle_request = joystick_x;// + 30 * sin((float)counter / 30 * 6.28 / 1.3);
+		uint8_t position_request = slider;
+		uint8_t angle_request = joystick_x;
 
-		CanFrame_t frame = {
-			.id = 0x100,
-			.length = 0x3,
-			.data.u8[0] = game_active ? angle_request : 0,
-			.data.u8[1] = game_active ? position_request : 127,
-			.data.u8[2] = game_active ? button_message : 0,
-		};
-
-		can_tx_message(&frame);
 
 
 		// Check end-of-game condition
 		if (game_active && led_broken) {
 			game_active = false;
+			
+			play_sound_command = 1;
+
 			if (score3x / 3 > xmem_get_highscore()) {
 				xmem_set_highscore(score3x / 3);
 				menu_current = MENU_FIREWORKS;
@@ -265,6 +277,18 @@ int main(void)
 			}
 		}
 
+		
+		CanFrame_t tx_frame = {
+			.id = 0x100,
+			.length = 0x4,
+			.data.u8[0] = game_active ? angle_request : 0,
+			.data.u8[1] = game_active ? position_request : 127,
+			.data.u8[2] = game_active ? button_message : 0,
+			.data.u8[3] = play_sound_command
+		};
+
+		can_tx_message(&tx_frame);
+		
 		CanFrame_t rx_frame;
 		// Receive CAN message
 		if(can_rx_message(&rx_frame)) {
@@ -273,12 +297,15 @@ int main(void)
 			motor_position = rx_frame.data.u8[1];
 		}
 
+		play_sound_command = 0;
+
 		// Wait for timer to reach value corresponding to 
 		// desired update frequency
 		while (TCNT1 < TIMER_TARGET_VALUE) { } ;
     }
 }
 
+// Default interrupt handler to catch Hard Faults
 ISR(__vector_default) {
 	_delay_ms(1000);
 }

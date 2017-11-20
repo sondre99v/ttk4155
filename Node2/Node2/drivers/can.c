@@ -59,13 +59,13 @@ void can_tx_message(CanFrame_t* tx_frame) {
 	mcp_request_to_send(true, false, false);
 }
 
-bool can_rx_message(CanFrame_t* rx_frame) {
+bool can_rx_message(volatile CanFrame_t* rx_frame) {
 	if (!mcp_read_status().CAN0_ReceiveInterrupt) {
 		return false;
 	}
 	
-	rx_frame->id = mcp_read(0x61) << 8;
-	rx_frame->id |= mcp_read(0x62);
+	rx_frame->id = (mcp_read(0x61) << 3) & 0x07F8;
+	rx_frame->id |= (mcp_read(0x62) >> 5);
 
 	rx_frame->length = mcp_read(0x65);
 	

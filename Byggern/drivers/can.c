@@ -31,6 +31,11 @@ void can_init() {
 	
 	// Setup RX buffer 1
 	mcp_write(0x70, 0x00); // Write config
+	
+	mcp_write(0x04, 0xFF); // Write config RX buffer 0
+	mcp_write(0x05, 0xE0); // Write config RX buffer 0
+	mcp_write(0x24, 0xFF); // Write config RX buffer 0
+	mcp_write(0x25, 0xE0); // Write config RX buffer 0
 
 
 	mcp_write(0x20, 0x00); // Clear ID masks
@@ -59,13 +64,14 @@ void can_tx_message(CanFrame_t* tx_frame) {
 	mcp_request_to_send(true, false, false);
 }
 
-bool can_rx_message(CanFrame_t* rx_frame) {
-	if (!mcp_read_status().CAN0_ReceiveInterrupt) {
+bool can_rx_message(volatile CanFrame_t* rx_frame) {
+	McpStatus_t stat = mcp_read_status();
+	if (!stat.CAN0_ReceiveInterrupt) {
 		return false;
 	}
 	
-	rx_frame->id = mcp_read(0x61) << 8;
-	rx_frame->id |= mcp_read(0x62);
+	rx_frame->id = (mcp_read(0x61) << 3) & 0x07F8;
+	rx_frame->id |= (mcp_read(0x62) >> 5);
 
 	rx_frame->length = mcp_read(0x65);
 	
