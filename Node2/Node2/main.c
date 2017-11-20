@@ -39,7 +39,7 @@ int main(void)
 	
 	motor_reset_encoder();
 	
-	//Declaration of game variables
+	//Declaration of data variables
 	int8_t joystick_x = 0;
 	uint8_t slider_data = 0;
 	uint8_t should_shoot = 0;

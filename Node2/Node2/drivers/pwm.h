@@ -15,6 +15,6 @@
 void pwm_init();
 void pwm_set_duty_cycle(uint8_t duty_cycle);
 void pwm_set_pulse_width(uint16_t pulse_width_us);
-void pwm_set_servo_deflection(uint8_t joystick_input);
+void pwm_set_servo_deflection(int8_t joystick_input);
 
 #endif /* PWM_H_ */
