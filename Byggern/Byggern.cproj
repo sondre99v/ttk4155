@@ -210,6 +210,9 @@
     <Compile Include="images\img_fireworks.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="images\img_ma_long.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="images\img_wagon.h">
       <SubType>compile</SubType>
     </Compile>
