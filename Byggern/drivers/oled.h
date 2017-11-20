@@ -19,10 +19,16 @@
 #define SCREEN_COLUMNS (SCREEN_WIDTH / TEXT_WIDTH)
 #define SCREEN_ROWS (SCREEN_HEIGHT / TEXT_HEIGHT)
 
+typedef enum {
+	COMP_NONE,
+	COMP_SCALE,
+	COMP_RUN_LENGTH
+} Compression_t;
+
 typedef struct {
 	uint8_t width;
 	uint8_t height;
-	uint8_t scale;
+	Compression_t compression;
 	const uint8_t* img_data;
 } Image_t;
 

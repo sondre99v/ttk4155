@@ -160,22 +160,43 @@ uint8_t stretch[] = {
 };
 
 void oled_draw_image(Image_t* image, uint8_t x, uint8_t row) {
-	if (image->scale != 2) {
+	if (image->compression == COMP_NONE) {
 		for(int pr = 0; pr < image->height / 8; pr++) {
 			oled_position(row + pr, x);
 			for(int px = 0; px < image->width; px++) {
-				_write_dat_byte(~pgm_read_byte(&image->img_data[pr * image->width + px]));
+				_write_dat_byte(pgm_read_byte(&image->img_data[pr * image->width + px]));
 			}
 		}
-	} else {
+	} else if (image->compression == COMP_SCALE) {
 		for(int pr = 0; pr < 2 * image->height / 8; pr++) {
 			oled_position(row + pr, x);
 			for(int px = 0; px < image->width; px++) {
-				uint8_t b = ~pgm_read_byte(&image->img_data[(pr >> 1) * image->width + px]);
+				uint8_t b = pgm_read_byte(&image->img_data[(pr >> 1) * image->width + px]);
 				uint8_t ns = pr % 2;
 				uint8_t n = (b >> (ns * 4)) & 0x0F; 
 				_write_dat_byte(stretch[n]);
 				_write_dat_byte(stretch[n]);
+			}
+		}
+	} else if (image->compression == COMP_RUN_LENGTH) {
+		uint16_t index = 0;
+		int pr = 0;
+		int px = 0;
+		oled_position(row + pr, x);
+		while (pr < image->height / 8) {
+			uint8_t img_dat = pgm_read_byte(&image->img_data[index++]);
+			uint8_t count = 1;
+			if (img_dat == 0x00) {
+				count = pgm_read_byte(&image->img_data[index++]);
+			}
+
+			for(int i = 0; i < count; i++) {
+				_write_dat_byte(img_dat);
+				px = (px + 1) % image->width;
+				if (px == 0) {
+					pr++;
+					oled_position(row + pr, x);
+				}
 			}
 		}
 	}

@@ -8,24 +8,24 @@
 #include "menu.h"
 #include "../drivers/joystick.h"
 #include "../drivers/display.h"
+#include "../node2.h"
 
 #include <stdio.h>
 #include <stdbool.h>
 
 const char* menu_heading = "    Main Menu   ";
-const char* menu_choices[4] = {
+const char* menu_choices[5] = {
 	"    Play game   ",
 	"    Highscore   ",
 	"     Status     ",
+	"   Best Player  ",
 	"      ????      "
 };
 
-const int menu_choices_num = 4;
+const int menu_choices_num = 5;
 
 static int selected_choice = 0;
-
 static bool waiting_for_joystick_return = false;
-
 
 void _menu_paint_choices() {
 	for(int i = 0; i < menu_choices_num; i++) {
@@ -58,11 +58,13 @@ int8_t menu_handle_input() {
 	if (dir == JoystickDir_UP && selected_choice > 0) {
 		selected_choice--;
 		waiting_for_joystick_return = true;
+		node2_request_sound(SOUND_BEEP);
 	}
 
 	if (dir == JoystickDir_DOWN && selected_choice < menu_choices_num - 1) {
 		selected_choice++;
 		waiting_for_joystick_return = true;
+		node2_request_sound(SOUND_BEEP);
 	}
 
 	_menu_paint_choices();
