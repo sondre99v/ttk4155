@@ -34,7 +34,7 @@ void can_init();
 
 void can_tx_message(CanFrame_t* tx_frame);
 
-bool can_rx_message(CanFrame_t* rx_frame);
+bool can_rx_message(volatile CanFrame_t* rx_frame);
 
 
 

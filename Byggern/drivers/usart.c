@@ -32,6 +32,35 @@ void usart_init(uint32_t baud_rate)
 
 	// Enable receive interrupt
 	UCSR0B |= (1 << RXCIE0);
+}
 
-	(void)_usart_tx_char;
+usart_print_str(const char* str) {
+	for (char* p = str; *p; p++) {
+		_usart_tx_char(*p);
+	}
+}
+
+_usart_print_nibble(uint8_t value) {
+	if (value < 10) {
+		_usart_tx_char('0' + value);
+	} else {
+		_usart_tx_char('A' + value - 10);
+	}
+}
+
+usart_print_uint8(uint8_t value) {
+	uint8_t most_significant_nibble = value >> 4;
+	uint8_t least_significant_nibble = value & 0x0F;
+	
+	usart_print_str("0x");
+	_usart_print_nibble(most_significant_nibble);
+	_usart_print_nibble(least_significant_nibble);
+}
+
+usart_print_uint16(uint16_t value) {
+	usart_print_str("0x");
+	_usart_print_nibble((value & 0xF000) >> 12);
+	_usart_print_nibble((value & 0x0F00) >> 8);
+	_usart_print_nibble((value & 0x00F0) >> 4);
+	_usart_print_nibble((value& 0x000F) >> 0);
 }

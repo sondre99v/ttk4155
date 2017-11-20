@@ -42,6 +42,7 @@ C_SRCS +=  \
 ../drivers/can.c \
 ../drivers/motor.c \
 ../drivers/shooter.c \
+../drivers/song.c \
 ../drivers/twi.c \
 ../drivers/mcp2515.c \
 ../drivers/pwm.c \
@@ -61,6 +62,7 @@ drivers/adc.o \
 drivers/can.o \
 drivers/motor.o \
 drivers/shooter.o \
+drivers/song.o \
 drivers/twi.o \
 drivers/mcp2515.o \
 drivers/pwm.o \
@@ -73,6 +75,7 @@ drivers/adc.o \
 drivers/can.o \
 drivers/motor.o \
 drivers/shooter.o \
+drivers/song.o \
 drivers/twi.o \
 drivers/mcp2515.o \
 drivers/pwm.o \
@@ -85,6 +88,7 @@ drivers/adc.d \
 drivers/can.d \
 drivers/motor.d \
 drivers/shooter.d \
+drivers/song.d \
 drivers/twi.d \
 drivers/mcp2515.d \
 drivers/pwm.d \
@@ -97,6 +101,7 @@ drivers/adc.d \
 drivers/can.d \
 drivers/motor.d \
 drivers/shooter.d \
+drivers/song.d \
 drivers/twi.d \
 drivers/mcp2515.d \
 drivers/pwm.d \
@@ -118,6 +123,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 
