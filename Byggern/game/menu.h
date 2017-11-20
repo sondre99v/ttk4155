@@ -13,5 +13,6 @@
 
 void menu_init();
 int8_t menu_handle_input();
+uint8_t menu_get_sound_request();
 
 #endif /* MENU_H_ */

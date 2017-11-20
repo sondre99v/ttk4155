@@ -8,7 +8,6 @@
 #include "menu.h"
 #include "../drivers/joystick.h"
 #include "../drivers/display.h"
-#include "../node2.h"
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -26,6 +25,7 @@ const int menu_choices_num = 5;
 
 static int selected_choice = 0;
 static bool waiting_for_joystick_return = false;
+static uint8_t sound_request = 0;
 
 void _menu_paint_choices() {
 	for(int i = 0; i < menu_choices_num; i++) {
@@ -46,8 +46,9 @@ void menu_init() {
 }
 
 int8_t menu_handle_input() {
+	sound_request = 0;
 	JoystickDir_t dir = joystick_get_direction();
-	
+
 	if (dir == JoystickDir_CENTER) {
 		waiting_for_joystick_return = false;
 	}
@@ -58,13 +59,13 @@ int8_t menu_handle_input() {
 	if (dir == JoystickDir_UP && selected_choice > 0) {
 		selected_choice--;
 		waiting_for_joystick_return = true;
-		node2_request_sound(SOUND_BEEP);
+		sound_request = 4;
 	}
 
 	if (dir == JoystickDir_DOWN && selected_choice < menu_choices_num - 1) {
 		selected_choice++;
 		waiting_for_joystick_return = true;
-		node2_request_sound(SOUND_BEEP);
+		sound_request = 4;
 	}
 
 	_menu_paint_choices();
@@ -78,4 +79,8 @@ int8_t menu_handle_input() {
 	}  
 
 	return -1;
+}
+
+uint8_t menu_get_sound_request() {
+	return sound_request;
 }

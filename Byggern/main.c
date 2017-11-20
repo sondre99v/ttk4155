@@ -30,6 +30,7 @@
 #include "images/img_cat.h"
 #include "images/img_wagon.h"
 #include "images/img_fireworks.h"
+#include "images/img_ma_long.h"
 
 
 #define LOOP_UPDATE_FREQUENCY_HZ 30
@@ -39,8 +40,6 @@
 #define until(x) while(!(x))
 
 //volatile char* sram = (char*)0x1800;
-
-uint8_t play_sound_command = 0;
 
 int main(void)
 {
@@ -90,6 +89,7 @@ int main(void)
 	bool led_broken = false;
 	uint8_t led_value = 255;
 	uint8_t motor_position = 127;
+	uint8_t sound_request = 0;
 
 	// Define menu variables
 	enum {
@@ -99,6 +99,7 @@ int main(void)
 		MENU_FIREWORKS,
 		MENU_HIGHSCORE, 
 		MENU_STATUS,
+		MENU_MA_LONG,
 		MENU_CAT
 	} menu_current = MENU_MAIN;
 	
@@ -109,6 +110,7 @@ int main(void)
 
 		if (!game_active) {
 			uint8_t choice = menu_handle_input();
+			sound_request = menu_get_sound_request();
 
 			switch(choice) {
 				case 0: 
@@ -118,14 +120,15 @@ int main(void)
 					break;
 				case 1: menu_current = MENU_HIGHSCORE; break;
 				case 2: menu_current = MENU_STATUS; break;
-				case 3: menu_current = MENU_CAT; break;
+				case 3: menu_current = MENU_MA_LONG; break;
+				case 4: menu_current = MENU_CAT; break;
 				case 10: menu_current = MENU_MAIN; break;
 				default: break;
 			}
 
 			// Draw current page
 			uint8_t firework_sequence[] = {
-				0,1,0,1,2,1,2,3,2,3,4,3,4,5,4,5,6,5,6,
+				0,1,2,1,2,3,2,3,4,3,4,5,4,5,6,5,6,
 			};
 
 			switch(menu_current) {
@@ -145,7 +148,7 @@ int main(void)
 
 					if (count_down <= LOOP_UPDATE_FREQUENCY_HZ) {
 						game_active = true;
-						play_sound_command = 2;
+						sound_request = 2;
 						forced_shoot_countdown = 3 * LOOP_UPDATE_FREQUENCY_HZ;
 					}
 					break;
@@ -189,7 +192,9 @@ int main(void)
 						printf("Led broken: NO");
 					}
 					break;
-
+				case MENU_MA_LONG:
+					oled_draw_image(&img_ma_long, 0, 0);
+					break;
 				case MENU_CAT:
 					oled_draw_image(&img_cat, 0, 0);
 					break;
@@ -206,7 +211,7 @@ int main(void)
 					break;
 			}
 		
-			unless (menu_current == MENU_CAT) {
+			unless (menu_current == MENU_CAT || menu_current == MENU_MA_LONG) {
 				display_repaint();
 			}
 		} else {
@@ -266,7 +271,7 @@ int main(void)
 		if (game_active && led_broken) {
 			game_active = false;
 			
-			play_sound_command = 1;
+			sound_request = 1;
 
 			if (score3x / 3 > xmem_get_highscore()) {
 				xmem_set_highscore(score3x / 3);
@@ -284,7 +289,7 @@ int main(void)
 			.data.u8[0] = game_active ? angle_request : 0,
 			.data.u8[1] = game_active ? position_request : 127,
 			.data.u8[2] = game_active ? button_message : 0,
-			.data.u8[3] = play_sound_command
+			.data.u8[3] = sound_request
 		};
 
 		can_tx_message(&tx_frame);
@@ -297,7 +302,7 @@ int main(void)
 			motor_position = rx_frame.data.u8[1];
 		}
 
-		play_sound_command = 0;
+		sound_request = 0;
 
 		// Wait for timer to reach value corresponding to 
 		// desired update frequency
