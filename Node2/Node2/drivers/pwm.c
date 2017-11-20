@@ -12,6 +12,8 @@
 #define PWM_PORT PORTB
 #define PWM_PIN PB6
 
+#define SERVO_OFFSET 10
+
 #define TC_TOP 40000
 
 void pwm_init() {
@@ -44,11 +46,20 @@ void pwm_set_pulse_width(uint16_t pulse_width_us) {
 	}
 }
 
-void pwm_set_servo_deflection(uint8_t deflection) {
+void pwm_set_servo_deflection(int8_t joystick_input) {
+	
+	//Scale joystick reading
+	int16_t servo_defl = 100 * (joystick_input - SERVO_OFFSET + 127) / 255;
+	
+	//Check for end-conditions
+	if (servo_defl > 100) servo_defl = 100;
+	if (servo_defl < 0) servo_defl = 0;
+	
+	//Set servo
 	const int min_pulse_us = 900;
 	const int max_pulse_us = 2100;
 	const int max_deflection = 100;
 	
 	pwm_set_pulse_width(min_pulse_us + 
-		(max_pulse_us - min_pulse_us) * (uint32_t)deflection / max_deflection);
+		(max_pulse_us - min_pulse_us) * (uint32_t)servo_defl / max_deflection);
 }
