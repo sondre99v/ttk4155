@@ -12,7 +12,8 @@
 typedef enum {
 	SONG_END,
 	SONG_START,
-	SONG_LOADING
+	SONG_LOADING,
+	SONG_BEEP
 } SoundSong_t;
 
 

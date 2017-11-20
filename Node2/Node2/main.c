@@ -106,6 +106,8 @@ int main(void)
 				song_play(SONG_START);
 			} else if (frame.data.u8[3] == 3) {
 				song_play(SONG_LOADING);
+			} else if (frame.data.u8[3] == 4) {
+				song_play(SONG_BEEP);
 			} else {
 				// Exctract values from can message
 				int8_t joystick_x = frame.data.i8[0];
