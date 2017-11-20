@@ -23,9 +23,12 @@ void motor_init();
 void motor_enable();
 void motor_disable();
 void motor_set(uint8_t speed, motor_direction_t direction);
+void motor_calibrate_position();
+
+void motor_regulate(float encoder_position, float slider);
 
 void motor_reset_encoder();
-int16_t motor_read_encoder();
+float motor_get_position();
 
 
 #endif /* MOTOR_H_ */
